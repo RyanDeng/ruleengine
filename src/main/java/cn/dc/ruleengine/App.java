@@ -45,6 +45,7 @@ public class App
         account.setBalance(20);
         account.setUserId("3");
         
+        
         Serializable compiled =  MVEL.compileExpression("userAccount.getUserId() < account.userId");
         Map vars = new HashMap();
         vars.put("userAccount", userAccount2);
@@ -55,7 +56,6 @@ public class App
         Serializable compiledTODO =MVEL.compileExpression("System.out.println(account.balance);System.out.println(account.getUserId())");
         Map vars2=new HashMap();
         vars2.put("account", account);
-        
         Object res2=MVEL.executeExpression(compiledTODO,vars2);
         System.out.println(res2);
     }
