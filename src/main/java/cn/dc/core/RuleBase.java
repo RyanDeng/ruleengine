@@ -1,40 +1,19 @@
 package cn.dc.core;
 
+import java.util.List;
+
 public interface RuleBase {
-	StatefulSession newStatefulSession();
+	WorkingMemory newWorkingMemory();
 
-    StatefulSession newStatefulSession(boolean keepReference);
-
-    StatefulSession newStatefulSession(java.io.InputStream stream);
-
-    StatefulSession newStatefulSession(java.io.InputStream stream,
-                                                           boolean keepReference);
     
-    public StatefulSession newStatefulSession(java.io.InputStream stream,
-                                              boolean keepReference,
-                                              SessionConfiguration conf);    
-    
-    /**
-     * Create a new <code>WorkingMemory</code> session for this
-     * <code>RuleBase</code>.
-     *
-     * @param config the session configuration object to use for the
-     *               created session.
-     *
-     * @see WorkingMemory
-     * @see org.kie.conflict.DefaultConflictResolver
-     *
-     * @return A newly initialized <code>WorkingMemory</code>.
-     */
-    StatefulSession newStatefulSession(SessionConfiguration config, Environment environment);
 
-    Package[] getPackages();
+    List<RulePackage> getPackages();
 
-    Package getPackage(String name);
+    RulePackage getPackage(String name);
 
-    void addPackages(Package[] pkgs );
+    void addPackages(List<RulePackage> pkgs );
 
-    void addPackage(Package pkg);
+    void addPackage(RulePackage pkg);
 
     /**
      * This locks the current RuleBase and all there referenced StatefulSessions. This should be
@@ -100,20 +79,7 @@ public interface RuleBase {
      * Returns an array of all the referenced StatefulSessions
      * @return
      */
-    public StatefulSession[] getStatefulSessions();
+    public WorkingMemory[] getWorkingMemories();
 
-    /**
-     * Returns a declared FactType.
-     * FactTypes are types that are declared as part of the rules (an alternative to POJOs).
-     * From a fact type you can generate instances of facts which you can use to communicate with the engine.
-     *
-     * @param string - the name of the declared type (a type defined in the rules).
-     * This would typically be packagename + . + type name.
-     *
-     * Eg, if there is a delcared type of name "Driver", and the package name is "com.company".
-     * Then the string you pass in would be "com.company.Driver".
-     */
-    public FactType getFactType(String string);
-    
-    public Set<String> getEntryPointIds();
+   
 }
