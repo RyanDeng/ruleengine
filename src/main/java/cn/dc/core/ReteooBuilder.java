@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 
 import cn.dc.compiler.EntryPoint;
+import cn.dc.compiler.JoinNode;
 import cn.dc.compiler.ObjectType;
 import cn.dc.compiler.ObjectTypeNode;
 import cn.dc.runtime.BuildReteTempData;
+import cn.dc.runtime.JoinCondition;
 
 public class ReteooBuilder {
 	private ReteooRuleBase ruleBase;
@@ -22,6 +24,7 @@ public class ReteooBuilder {
 		List<Rule> rules = rulePackage.getRules();
 		for (Rule rule : rules) {
 			createObjectType(rule, getBuildReteTempData(rule));
+		
 		}
 	}
 
@@ -44,23 +47,39 @@ public class ReteooBuilder {
 		return objectTypeNames;
 	}
 
-	private HashMap<String, ObjectTypeNode> createObjectType(Rule rule,
+	private void createObjectType(Rule rule,
 			BuildReteTempData reteTempData) {
 		HashMap<String, ObjectTypeNode> objectTypeNodes = entryPoint
 				.getObjectTypeNodes() == null ? new HashMap<String, ObjectTypeNode>()
 				: entryPoint.getObjectTypeNodes();
+		
+		if (entryPoint.getObjectTypeNodes() == null) {
+			entryPoint.setObjectTypeNodes(objectTypeNodes);
+		}
 		for (Column column : rule.getColumns()) {
 			ObjectTypeNode objectTypeNode = new ObjectTypeNode(rule
 					.getContainerPackage().getName());
 			objectTypeNode
 					.setObjectType(new ObjectType(column.getTypeAllpath()));
-			objectTypeNode.buildAlphaNode(column, reteTempData);
+			objectTypeNode.setRuleName(rule.getName());
+			//得到joinCondition
+			List<JoinCondition> joinConditions = objectTypeNode
+					.buildAlphaNode(column, reteTempData,rule.getName());
 			if (!objectTypeNodes.containsKey(objectTypeNode.getObjectType()
 					.getClassNameAllPath())) {
 				objectTypeNodes.put(objectTypeNode.getObjectType()
 						.getClassNameAllPath(), objectTypeNode);
 			}
+			
 		}
-		return objectTypeNodes;
+		return ;
+	}
+	private void createBetaNodeInOneColumn(List<JoinCondition> joinConditions){
+		if(joinConditions!=null){
+			for(JoinCondition joinCondition:joinConditions){
+				JoinNode joinNode=new JoinNode(joinCondition.getCondition().getExpression());
+				joinCondition.getLeftInputNode().setJoinNode(joinNode);
+			}
+		}
 	}
 }

@@ -1,6 +1,7 @@
 package cn.dc.compiler;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,15 +13,24 @@ import cn.dc.core.Condition;
 import cn.dc.core.Rule;
 import cn.dc.core.Condition.AndOr;
 import cn.dc.runtime.BuildReteTempData;
+import cn.dc.runtime.JoinCondition;
 
-public class ObjectTypeNode implements Serializable{
+public class ObjectTypeNode implements Serializable,Node{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	private ObjectType objectType;
 	private String pkgName;
+	private String ruleName;
+	
 
+	public String getRuleName() {
+		return ruleName;
+	}
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
 	private HashMap<String, AlphaNode> alphaNodes;
 
 	public ObjectTypeNode(String pkgName){
@@ -49,25 +59,32 @@ public class ObjectTypeNode implements Serializable{
 	public void setPkgName(String pkgName) {
 		this.pkgName = pkgName;
 	}
-	public void  buildAlphaNode(Column column,BuildReteTempData reteTempData){
+	public List<JoinCondition>  buildAlphaNode(Column column,BuildReteTempData reteTempData,String ruleName){
 		alphaNodes= alphaNodes==null?new HashMap<String, AlphaNode>():alphaNodes;
 		if(column.getConditions()==null){
 			AlphaNode alphaNodeNull = new AlphaNode("");
+			alphaNodeNull.setRuleName(ruleName);
 			if(!alphaNodes.containsKey("")){
 				alphaNodes.put("", alphaNodeNull);
 				alphaNodeNull.buildNextNodes();
 			}
-			return;
+			return null;
 		}
 		AlphaNode previousAlphaNode=null;
 		int index=0;
-		HashMap<K, V>
+		List<JoinCondition> joinConditions=new ArrayList<JoinCondition>();
+		AlphaMemoryNode leftInput=null;
+		//如果有joinCondition则所有的andOr都变成and
+		makeConditionAndWhenJoinCondition(column,reteTempData);
 		for(Condition condition:column.getConditions()){
 			index++;
 			if(reteTempData.isConditionJoin(condition.getExpression())){
-				//TODO
+				JoinCondition joinCondition=new JoinCondition();
+				joinCondition.setCondition(condition);
+				joinConditions.add(joinCondition);
 			}else{
 				AlphaNode alphaNode=new AlphaNode(condition.getExpression());
+				alphaNode.setRuleName(ruleName);
 				if(condition.getAndOr()==AndOr.AND){
 					//之前有父alphaNode
 					if(previousAlphaNode!=null){
@@ -88,14 +105,38 @@ public class ObjectTypeNode implements Serializable{
 				}
 				//最后一个condition要连接到memorynode
 				if(index==column.getConditions().size()){
-					alphaNodes.get(alphaNode.getConditionValue()).buildNextNodes();
+					leftInput=alphaNodes.get(alphaNode.getConditionValue()).buildNextNodes();
 				}
 				previousAlphaNode=alphaNode;
 			}
 		}
+		//若有joinCondition,则所有的这些condition都加上leftInput
+		for(JoinCondition joinCondition:joinConditions){
+			joinCondition.setLeftInputNode(leftInput);
+		}
+		return joinConditions;
 	}
-
-	
+	private void makeConditionAndWhenJoinCondition(Column column,BuildReteTempData reteTempData){
+		boolean isJoinCondition=false;
+		for(Condition condition:column.getConditions()){
+			if(reteTempData.isConditionJoin(condition.getExpression())){
+				isJoinCondition=true;
+				break;
+			}
+		}
+		for(Condition condition:column.getConditions()){
+			condition.setAndOr("AND");
+		}
+	}
+	private void createBetaNode(List<JoinCondition> joinConditions){
+		if(joinConditions!=null){
+			for(JoinCondition joinCondition:joinConditions){
+				JoinNode joinNode=new JoinNode(joinCondition.getCondition().getExpression());
+				joinNode.setRuleName(ruleName);
+				joinCondition.getLeftInputNode().setJoinNode(joinNode);
+			}
+		}
+	}
 	//private HashSet<String> needToLinkAlphaMemNode(List<Condition> conditions){
 //		HashSet<String> hs=new HashSet<String>();
 //		for(int i=0;i<conditions.size();i++){

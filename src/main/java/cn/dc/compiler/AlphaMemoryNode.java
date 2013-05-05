@@ -4,7 +4,7 @@ package cn.dc.compiler;
 import java.util.HashSet;
 import java.util.Set;
 
-public class AlphaMemoryNode extends AlphaNode {
+public class AlphaMemoryNode extends AlphaNode implements Node{
 
 	
 	/**

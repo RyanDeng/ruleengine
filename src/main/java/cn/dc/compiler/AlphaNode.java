@@ -3,7 +3,7 @@ package cn.dc.compiler;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class AlphaNode implements Serializable{
+public class AlphaNode implements Serializable,Node{
 
 	/**
 	 * 
@@ -11,6 +11,15 @@ public class AlphaNode implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String conditionValue;
 	private HashMap<String, AlphaNode> nextNodes;
+	private String ruleName;
+	
+
+	public String getRuleName() {
+		return ruleName;
+	}
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
 	public AlphaNode(){}
 	public AlphaNode(String conditionValue){
 		this.conditionValue=conditionValue;
@@ -30,11 +39,14 @@ public class AlphaNode implements Serializable{
 	/**
 	 * 没有条件，则直接连到AlphaMemoryNode
 	 */
-	public void buildNextNodes(){
+	public AlphaMemoryNode buildNextNodes(){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
+		AlphaMemoryNode node=null;
 		if(!nextNodes.containsKey("")){
-			nextNodes.put("", new AlphaMemoryNode(this));
+			node=new AlphaMemoryNode(this);
+			nextNodes.put("", node);
 		}
+		return node;
 	}
 	
 }
