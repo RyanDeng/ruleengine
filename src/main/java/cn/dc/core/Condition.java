@@ -1,9 +1,12 @@
 package cn.dc.core;
 
+import java.util.HashMap;
+
 public class Condition {
 	private AndOr andOr;
 	private String expression;
-	public Condition(){}
+	private Column leftInput;
+	public Condition(){this.andOr=AndOr.valueOf("AND");}
 	public Condition(String expre){
 		this.expression=expre;
 		this.andOr=AndOr.valueOf("AND");

@@ -30,7 +30,7 @@ public class XMLParser {
 		List<String> importPkgs=new ArrayList<String>();
 		List<Element> imports=rootElm.elements("import");
 		for(Element importElement :imports){
-			importPkgs.add(importElement.attributeValue("name"));
+			importPkgs.add(importElement.attributeValue("name").replaceAll("\\s", ""));
 		}
 		return importPkgs;
 	}
@@ -53,7 +53,7 @@ public class XMLParser {
 		return rule;
 	}
 	private static Column parseForColumn(Element columnElm){
-		Column column=new Column(columnElm.attributeValue("type"), columnElm.attributeValue("name"));
+		Column column=new Column(columnElm.attributeValue("type").replaceAll("\\s", ""), columnElm.attributeValue("name").replaceAll("\\s", ""));
 		column.setConditions(new ArrayList<Condition>());
 		List<Element> conditions=columnElm.elements("condition");
 		for(Element element:conditions){
@@ -62,9 +62,9 @@ public class XMLParser {
 		return column;
 	}
 	private static Condition parseForCondition(Element conditionElm){
-		Condition condition=new Condition(conditionElm.getText());
+		Condition condition=new Condition(conditionElm.getText().replaceAll("\\s", ""));
 		if(conditionElm.attribute("andOr")!=null){
-			condition.setAndOr(conditionElm.attributeValue("andOr"));
+			condition.setAndOr(conditionElm.attributeValue("andOr").replaceAll("\\s", ""));
 		}
 		return condition;
 	}
@@ -73,7 +73,7 @@ public class XMLParser {
 			Document document=XMLParser.getDocument(path);
 			Element rootElm = document.getRootElement();
 			
-			RulePackage rulePackage=new RulePackage(rootElm.attributeValue("name"));
+			RulePackage rulePackage=new RulePackage(rootElm.attributeValue("name").replaceAll("\\s", ""));
 			//解析得到import
 			rulePackage.setImportPkgs(parseForImports(rootElm));
 			

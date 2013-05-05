@@ -6,6 +6,7 @@ import java.util.Set;
 
 public class AlphaMemoryNode extends AlphaNode {
 
+	
 	/**
 	 * 
 	 */
@@ -15,6 +16,10 @@ public class AlphaMemoryNode extends AlphaNode {
 	
 	private JoinNode joinNode;
 	
+	private AlphaNode previousNode;
+	public AlphaMemoryNode(AlphaNode alphaNode){
+		this.previousNode=alphaNode;
+	}
 	
 	public Set<Object> getReadyObjects() {
 		return readyObjects;
@@ -27,6 +32,14 @@ public class AlphaMemoryNode extends AlphaNode {
 	}
 	public void setJoinNode(JoinNode joinNode) {
 		this.joinNode = joinNode;
+	}
+
+	public AlphaNode getPreviousNode() {
+		return previousNode;
+	}
+
+	public void setPreviousNode(AlphaNode previousNode) {
+		this.previousNode = previousNode;
 	}
 	
 	
