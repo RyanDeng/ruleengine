@@ -12,7 +12,7 @@ public class JoinNode implements Serializable, Node {
 	private BetaMemory betaMemory;
 	private Node nextJoinOrRuleNode;
 	private Node leftInputNode;
-	private Node rightInputNode;f
+	private Node rightInputNode;
 	private String ruleName;
 
 	public String getRuleName() {
@@ -50,6 +50,22 @@ public class JoinNode implements Serializable, Node {
 
 	public void setNextJoinOrRuleNode(Node nextJoinOrRuleNode) {
 		this.nextJoinOrRuleNode = nextJoinOrRuleNode;
+	}
+
+	public Node getLeftInputNode() {
+		return leftInputNode;
+	}
+
+	public void setLeftInputNode(Node leftInputNode) {
+		this.leftInputNode = leftInputNode;
+	}
+
+	public Node getRightInputNode() {
+		return rightInputNode;
+	}
+
+	public void setRightInputNode(Node rightInputNode) {
+		this.rightInputNode = rightInputNode;
 	}
 
 }

@@ -59,7 +59,7 @@ public class ObjectTypeNode implements Serializable,Node{
 	public void setPkgName(String pkgName) {
 		this.pkgName = pkgName;
 	}
-	public List<JoinCondition>  buildAlphaNode(Column column,BuildReteTempData reteTempData,String ruleName){
+	public HashSet<JoinNode>  buildAlphaNode(Column column,BuildReteTempData reteTempData,String ruleName){
 		alphaNodes= alphaNodes==null?new HashMap<String, AlphaNode>():alphaNodes;
 		if(column.getConditions()==null){
 			AlphaNode alphaNodeNull = new AlphaNode("");
@@ -114,7 +114,8 @@ public class ObjectTypeNode implements Serializable,Node{
 		for(JoinCondition joinCondition:joinConditions){
 			joinCondition.setLeftInputNode(leftInput);
 		}
-		return joinConditions;
+		//够在betanode
+		return createBetaNode(joinConditions);
 	}
 	private void makeConditionAndWhenJoinCondition(Column column,BuildReteTempData reteTempData){
 		boolean isJoinCondition=false;
@@ -128,14 +129,18 @@ public class ObjectTypeNode implements Serializable,Node{
 			condition.setAndOr("AND");
 		}
 	}
-	private void createBetaNode(List<JoinCondition> joinConditions){
+	private HashSet<JoinNode> createBetaNode(List<JoinCondition> joinConditions){
+		HashSet<JoinNode> hs=new HashSet<JoinNode>();
 		if(joinConditions!=null){
 			for(JoinCondition joinCondition:joinConditions){
 				JoinNode joinNode=new JoinNode(joinCondition.getCondition().getExpression());
 				joinNode.setRuleName(ruleName);
 				joinCondition.getLeftInputNode().setJoinNode(joinNode);
+				joinNode.setLeftInputNode(joinCondition.getLeftInputNode());
+				hs.add(joinNode);
 			}
 		}
+		return hs;
 	}
 	//private HashSet<String> needToLinkAlphaMemNode(List<Condition> conditions){
 //		HashSet<String> hs=new HashSet<String>();

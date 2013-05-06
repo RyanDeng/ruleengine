@@ -2,6 +2,7 @@ package cn.dc.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import cn.dc.compiler.EntryPoint;
@@ -56,6 +57,7 @@ public class ReteooBuilder {
 		if (entryPoint.getObjectTypeNodes() == null) {
 			entryPoint.setObjectTypeNodes(objectTypeNodes);
 		}
+		HashSet<JoinNode> joinNodes=new HashSet<JoinNode>();
 		for (Column column : rule.getColumns()) {
 			ObjectTypeNode objectTypeNode = new ObjectTypeNode(rule
 					.getContainerPackage().getName());
@@ -63,8 +65,8 @@ public class ReteooBuilder {
 					.setObjectType(new ObjectType(column.getTypeAllpath()));
 			objectTypeNode.setRuleName(rule.getName());
 			//得到joinCondition
-			List<JoinCondition> joinConditions = objectTypeNode
-					.buildAlphaNode(column, reteTempData,rule.getName());
+			joinNodes.addAll(objectTypeNode
+					.buildAlphaNode(column, reteTempData,rule.getName()));
 			if (!objectTypeNodes.containsKey(objectTypeNode.getObjectType()
 					.getClassNameAllPath())) {
 				objectTypeNodes.put(objectTypeNode.getObjectType()
@@ -74,12 +76,5 @@ public class ReteooBuilder {
 		}
 		return ;
 	}
-	private void createBetaNodeInOneColumn(List<JoinCondition> joinConditions){
-		if(joinConditions!=null){
-			for(JoinCondition joinCondition:joinConditions){
-				JoinNode joinNode=new JoinNode(joinCondition.getCondition().getExpression());
-				joinCondition.getLeftInputNode().setJoinNode(joinNode);
-			}
-		}
-	}
+	
 }
