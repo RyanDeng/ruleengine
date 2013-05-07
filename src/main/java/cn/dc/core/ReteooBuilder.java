@@ -57,7 +57,7 @@ public class ReteooBuilder {
 		if (entryPoint.getObjectTypeNodes() == null) {
 			entryPoint.setObjectTypeNodes(objectTypeNodes);
 		}
-		HashSet<JoinNode> joinNodes=new HashSet<JoinNode>();
+		List<JoinNode> joinNodes=new ArrayList<JoinNode>();
 		for (Column column : rule.getColumns()) {
 			ObjectTypeNode objectTypeNode = new ObjectTypeNode(rule
 					.getContainerPackage().getName());
@@ -72,9 +72,18 @@ public class ReteooBuilder {
 				objectTypeNodes.put(objectTypeNode.getObjectType()
 						.getClassNameAllPath(), objectTypeNode);
 			}
-			
 		}
 		return ;
 	}
+	private void buildJoinNodes(List<JoinNode> joinNodes){
+		if(joinNodes.size()==0){//rulenode上没有betanode则直接连接到alphanode
+			
+		}else{
+			for(int i=0;i<joinNodes.size();i++){
+				
+			}
+		}
+	}
+	private void findRightInput(JoinNode joinNode,)
 	
 }
