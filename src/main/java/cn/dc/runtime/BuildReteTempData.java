@@ -1,6 +1,11 @@
 package cn.dc.runtime;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.mvel2.optimizers.impl.refl.nodes.ArrayAccessor;
+
+import cn.dc.compiler.ObjectType;
 
 public class BuildReteTempData {
 	private List<String> variables;
@@ -28,6 +33,15 @@ public class BuildReteTempData {
 		else {
 			return false;
 		}
+	}
+	public List<String> getJoinNodeInputs(String expre){
+		List<String> results=new ArrayList<String>();
+		for(String var:variables){
+			if(expre.indexOf(var)!=-1){
+				results.add(var);
+			}
+		}
+		return results;
 	}
 //	public List<String> getObjectTypeNames() {
 //		return objectTypeNames;

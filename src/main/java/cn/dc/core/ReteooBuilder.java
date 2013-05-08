@@ -2,15 +2,19 @@ package cn.dc.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import cn.dc.compiler.AlphaMemoryNode;
+import cn.dc.compiler.AlphaNode;
 import cn.dc.compiler.EntryPoint;
 import cn.dc.compiler.JoinNode;
+import cn.dc.compiler.Node;
 import cn.dc.compiler.ObjectType;
 import cn.dc.compiler.ObjectTypeNode;
 import cn.dc.runtime.BuildReteTempData;
-import cn.dc.runtime.JoinCondition;
 
 public class ReteooBuilder {
 	private ReteooRuleBase ruleBase;
@@ -84,6 +88,31 @@ public class ReteooBuilder {
 			}
 		}
 	}
-	private void findRightInput(JoinNode joinNode,)
+	private ObjectType findRightInput(JoinNode joinNode,Rule rule ){
+		AlphaMemoryNode alphaMemoryNode=(AlphaMemoryNode)joinNode.getLeftInputNode();
+		BuildReteTempData buildReteTempData=getBuildReteTempData(rule);
+		String rightInputVarString=null;
+		List<String> inputsVar=buildReteTempData.getJoinNodeInputs(joinNode.getExpression());
+		//判断返回的两个参数名字，左输入含有则另一个是右输入
+		if(alphaMemoryNode.getPreviousNode().getConditionValue().indexOf(inputsVar.get(0))!=-1){
+			rightInputVarString= inputsVar.get(1);
+		}else{
+			rightInputVarString=inputsVar.get(0);
+		}
+		ObjectTypeNode rightObjectTypeNode=null;
+		for(Column column:rule.getColumns()){
+			if(rightInputVarString.equals(column.getName())){
+				rightObjectTypeNode=entryPoint.getObjectTypeNodes().get(column.getTypeAllpath());
+			}
+		}
+		
+	}
+	private List<Node> traverseObjectTypeNode(Rule rule,ObjectTypeNode objectTypeNode){
+		List<Node>  rightInputNodes=new ArrayList<Node>();
+		Iterator it = objectTypeNode.getAlphaNodes().entrySet().iterator();   
+        while (it.hasNext()) {   
+            Map.Entry entry = (Entry) it.next();  
+            
+	}
 	
 }
