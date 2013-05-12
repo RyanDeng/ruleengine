@@ -26,6 +26,10 @@ public class ReteooBuilder {
 		entryPoint = new EntryPoint();
 	}
 
+	public EntryPoint getEntryPoint() {
+		return entryPoint;
+	}
+
 	public void buildReteoo(RulePackage rulePackage) {
 		List<Rule> rules = rulePackage.getRules();
 		for (Rule rule : rules) {

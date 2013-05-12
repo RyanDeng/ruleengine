@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 import javax.print.attribute.HashAttributeSet;
 
 import cn.dc.core.Condition.AndOr;
+import cn.dc.use.UserAccount;
+import cn.dc.util.StringParser;
 
 public class Test {
 
@@ -38,9 +40,11 @@ public class Test {
 //		map.put(1, "c");
 //		}
 //		System.out.println(map);
-		List<Integer> as=new ArrayList<Integer>();
-		as.add(1);as.add(2);
-		System.out.println(as.get(2));
+		UserAccount account=new UserAccount();
+		System.out.println(account.getClass().getName());
+//		List<Integer> as=new ArrayList<Integer>();
+//		as.add(1);as.add(2);
+//		System.out.println(as.get(2));
 	}
 
 }

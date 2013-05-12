@@ -175,4 +175,8 @@ public class ObjectTypeNode implements Serializable,Node{
 //			}
 //		}
 //	}
+	public AlphaMemoryNode insert(Object obj) {
+		
+		
+	}
 }

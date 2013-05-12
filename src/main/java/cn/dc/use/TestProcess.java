@@ -3,6 +3,7 @@ package cn.dc.use;
 import cn.dc.compiler.PackageBuilder;
 import cn.dc.core.ReteooRuleBase;
 import cn.dc.core.RuleBase;
+import cn.dc.core.WorkingMemory;
 
 public class TestProcess {
 
@@ -16,5 +17,17 @@ public class TestProcess {
 		
 		RuleBase ruleBase=new ReteooRuleBase();
 		ruleBase.addPackages(pBuilder.getPackages());
+		WorkingMemory workingMemory=ruleBase.newWorkingMemory();
+		
+		UserAccount userAccount=new UserAccount();
+		userAccount.setUserId("1");
+		Account account=new Account();
+		account.setUserId("1");
+		account.setBalance(20.0);
+		Account account1=new Account();
+		account1.setUserId("1");
+		account1.setBalance(42.0);
+		
+		workingMemory.insert(userAccount);
 	}
 }

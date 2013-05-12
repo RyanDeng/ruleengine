@@ -9,10 +9,13 @@ public class RuleNode extends JoinNode implements Node {
 	private String ruleName;
 	private String thenStatements;
 	private Node previousNode;
+	private int salience;
+	
 	private List<AlphaMemoryNode> alphaMemoryNodes;
 	public RuleNode(Rule rule){
 		this.ruleName=rule.getName();
 		this.thenStatements=rule.getThen();
+		this.salience=rule.getSalience();
 	}
 	public RuleNode(Rule rule,Node previousNode){
 		this(rule);

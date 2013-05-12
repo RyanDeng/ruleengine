@@ -2,6 +2,8 @@ package cn.dc.core;
 
 import java.util.List;
 
+import cn.dc.compiler.EntryPoint;
+
 public interface RuleBase {
 	WorkingMemory newWorkingMemory();
 
@@ -81,5 +83,6 @@ public interface RuleBase {
      */
     public WorkingMemory[] getWorkingMemories();
 
+    public EntryPoint getEntryPoint();
    
 }

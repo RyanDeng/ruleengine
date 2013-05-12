@@ -16,6 +16,11 @@ public class EntryPoint implements Serializable{
 		this.objectTypeNodes = objectTypeNodes;
 	}
 
-	
+	public AlphaMemoryNode insert(Object obj){
+		ObjectTypeNode objectTypeNode=objectTypeNodes.get(obj.getClass().getName());
+		if(objectTypeNode!=null){
+			objectTypeNode.insert(obj);
+		}
+	}
 	
 }

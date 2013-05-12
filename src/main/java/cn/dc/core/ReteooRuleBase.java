@@ -2,6 +2,8 @@ package cn.dc.core;
 
 import java.util.List;
 
+import cn.dc.compiler.EntryPoint;
+
 public class ReteooRuleBase implements RuleBase {
 	
 	private ReteooBuilder reteooBuilder;
@@ -66,8 +68,8 @@ public class ReteooRuleBase implements RuleBase {
 	}
 
 	public WorkingMemory newWorkingMemory() {
-		// TODO Auto-generated method stub
-		return null;
+		WorkingMemory workingMemory=new WorkingMemory(this);
+		return workingMemory;
 	}
 
 	public void addPackages(List<RulePackage> pkgs) {
@@ -88,6 +90,9 @@ public class ReteooRuleBase implements RuleBase {
 	public RulePackage getPackage(String name) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	public EntryPoint getEntryPoint() {
+		return reteooBuilder.getEntryPoint();
 	}
 
 

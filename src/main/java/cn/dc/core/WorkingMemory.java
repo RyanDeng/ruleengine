@@ -1,14 +1,40 @@
 package cn.dc.core;
 
-public interface WorkingMemory {
+import java.util.ArrayList;
+import java.util.List;
 
-	public Agenda getAgenda();
+import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
-	RuleBase getRuleBase();
+public class WorkingMemory {
 
-	int fireAllRules() throws Exception;
+	private RuleBase ruleBase;
+	private List<Object> memoryList;
+	
+	public WorkingMemory(RuleBase ruleBase){
+		this.ruleBase=ruleBase;
+		memoryList=new ArrayList<Object>();
+	}
+	public Agenda getAgenda(){
+		return null;
+		
+	}
+	public void insert(Object object){
+		memoryList.add(object);
+		ruleBase.getEntryPoint().insert(object);
+	}
+	public RuleBase getRuleBase(){
+		return ruleBase;
+	}
 
-	int fireAllRules(int fireLimit) throws Exception;
+	public int fireAllRules() throws Exception{
+		return 0;
+		
+	}
 
+	public int fireAllRules(int fireLimit) throws Exception{
+		return fireLimit;
+		
+	}
+	
 	
 }
