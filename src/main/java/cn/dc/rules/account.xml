@@ -7,7 +7,6 @@
 	<when>
 		<column type="UserAccount" name="userAccount">
 			<condition>  userAccount.userId>2</condition>
-			<condiiton >userAccount.age>12</condiiton>
 		</column>
 		<column type="Account" name="account">
 			<condition>account.userId==userAccount.userId</condition>

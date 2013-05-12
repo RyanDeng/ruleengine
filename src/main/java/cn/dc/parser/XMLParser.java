@@ -97,7 +97,7 @@ public class XMLParser {
 //		Document document=getDocument(path);
 //	}
 	
-	public static void main(String[] args){
-		XMLParser.parseForPackage("/home/ryan/workspace/ruleengine/src/main/java/cn/dc/rules/account.xml");
-	}
+//	public static void main(String[] args){
+//		XMLParser.parseForPackage("/home/ryan/workspace/ruleengine/src/main/java/cn/dc/rules/account.xml");
+//	}
 }

@@ -2,6 +2,8 @@ package cn.dc.compiler;
 
 import java.io.Serializable;
 
+import cn.dc.core.Rule;
+
 public class JoinNode implements Serializable, Node {
 
 	/**
@@ -22,7 +24,7 @@ public class JoinNode implements Serializable, Node {
 	public void setRuleName(String ruleName) {
 		this.ruleName = ruleName;
 	}
-
+	public JoinNode(){}
 	public JoinNode(String expr) {
 		this.expression = expr;
 		betaMemory = new BetaMemory();
@@ -67,5 +69,7 @@ public class JoinNode implements Serializable, Node {
 	public void setRightInputNode(Node rightInputNode) {
 		this.rightInputNode = rightInputNode;
 	}
-
+	public void buildRuleNode(Rule rule){
+		nextJoinOrRuleNode=new RuleNode(rule, this);
+	}
 }

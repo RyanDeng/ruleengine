@@ -1,5 +1,7 @@
 package cn.dc.use;
 
+import cn.dc.core.RuleBase;
+
 
 
 /**

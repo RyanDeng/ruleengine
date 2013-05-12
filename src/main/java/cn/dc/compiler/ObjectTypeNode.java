@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import cn.dc.core.Column;
 import cn.dc.core.Condition;
@@ -23,7 +24,7 @@ public class ObjectTypeNode implements Serializable,Node{
 	private ObjectType objectType;
 	private String pkgName;
 	private String ruleName;
-	
+	private HashMap<String, AlphaNode> alphaNodes;
 
 	public String getRuleName() {
 		return ruleName;
@@ -31,8 +32,7 @@ public class ObjectTypeNode implements Serializable,Node{
 	public void setRuleName(String ruleName) {
 		this.ruleName = ruleName;
 	}
-	private HashMap<String, AlphaNode> alphaNodes;
-
+	
 	public ObjectTypeNode(String pkgName){
 		this.pkgName=pkgName;
 	}
@@ -82,6 +82,16 @@ public class ObjectTypeNode implements Serializable,Node{
 				JoinCondition joinCondition=new JoinCondition();
 				joinCondition.setCondition(condition);
 				joinConditions.add(joinCondition);
+				//column只有一个joinCondition就直接连接
+				if(index==column.getConditions().size()){
+					if(!alphaNodes.containsKey("")){
+						AlphaNode alphaNode=new AlphaNode("");
+						alphaNode.setRuleName(ruleName);
+						alphaNodes.put("", alphaNode);
+					}
+					leftInput=alphaNodes.get("").buildNextNodes();
+					leftInput.setRuleName(ruleName);
+				}
 			}else{
 				AlphaNode alphaNode=new AlphaNode(condition.getExpression());
 				alphaNode.setRuleName(ruleName);
@@ -105,10 +115,12 @@ public class ObjectTypeNode implements Serializable,Node{
 				}
 				//最后一个condition要连接到memorynode
 				if(index==column.getConditions().size()){
-					leftInput=alphaNodes.get(alphaNode.getConditionValue()).buildNextNodes();
+					leftInput=alphaNodes.get(condition.getExpression()).buildNextNodes();
+					leftInput.setRuleName(ruleName);
 				}
 				previousAlphaNode=alphaNode;
 			}
+			
 		}
 		//若有joinCondition,则所有的这些condition都加上leftInput
 		for(JoinCondition joinCondition:joinConditions){
@@ -135,12 +147,25 @@ public class ObjectTypeNode implements Serializable,Node{
 			for(JoinCondition joinCondition:joinConditions){
 				JoinNode joinNode=new JoinNode(joinCondition.getCondition().getExpression());
 				joinNode.setRuleName(ruleName);
-				joinCondition.getLeftInputNode().setJoinNode(joinNode);
+			 joinCondition.getLeftInputNode().setJoinNode(joinNode);
 				joinNode.setLeftInputNode(joinCondition.getLeftInputNode());
 				results.add(joinNode);
 			}
 		}
 		return results;
+	}
+	
+	public List<AlphaMemoryNode> traverseAndFindAlphaMemoryNodes(Rule rule){
+		List<AlphaMemoryNode> alphaMemoryNodes=new ArrayList<AlphaMemoryNode>();
+		Iterator it= alphaNodes.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry entry=(Entry) it.next();
+			AlphaNode alphaNode=(AlphaNode) entry.getValue();
+			if(alphaNode.getRuleName().equals(rule.getName())){
+				alphaMemoryNodes.addAll(alphaNode.traverseAndFindAlphaMemoryNodes(rule));
+			}
+		}
+		return alphaMemoryNodes;
 	}
 	//private HashSet<String> needToLinkAlphaMemNode(List<Condition> conditions){
 //		HashSet<String> hs=new HashSet<String>();

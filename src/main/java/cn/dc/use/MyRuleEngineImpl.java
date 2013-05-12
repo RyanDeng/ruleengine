@@ -29,8 +29,6 @@ public class MyRuleEngineImpl implements MyRuleEngine {
 		try {
 			PackageBuilder packageBuilder = getPackageBuilderFromDrlFile();
 			ruleBase.addPackages(packageBuilder.getPackages());
-		} catch (DroolsParserException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
@@ -38,15 +36,15 @@ public class MyRuleEngineImpl implements MyRuleEngine {
 		}
 	}
 
-	public void refreshEnginRule() {
-		ruleBase = MyRuleBaseFactory.getRuleBase();
-		org.drools.rule.Package[] packages = ruleBase.getPackages();
-		for (org.drools.rule.Package pg : packages) {
-			ruleBase.removePackage(pg.getName());
-		}
-
-		initEngine();
-	}
+//	public void refreshEnginRule() {
+//		ruleBase = MyRuleBaseFactory.getRuleBase();
+//		org.drools.rule.Package[] packages = ruleBase.getPackages();
+//		for (org.drools.rule.Package pg : packages) {
+//			ruleBase.removePackage(pg.getName());
+//		}
+//
+//		initEngine();
+//	}
 
 	public void executeRuleEngine(List<Object> objs) {
 		if (null == ruleBase.getPackages()

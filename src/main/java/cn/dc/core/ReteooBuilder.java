@@ -14,6 +14,7 @@ import cn.dc.compiler.JoinNode;
 import cn.dc.compiler.Node;
 import cn.dc.compiler.ObjectType;
 import cn.dc.compiler.ObjectTypeNode;
+import cn.dc.compiler.RuleNode;
 import cn.dc.runtime.BuildReteTempData;
 
 public class ReteooBuilder {
@@ -29,7 +30,7 @@ public class ReteooBuilder {
 		List<Rule> rules = rulePackage.getRules();
 		for (Rule rule : rules) {
 			createObjectType(rule, getBuildReteTempData(rule));
-		
+			System.out.println("test");
 		}
 	}
 
@@ -51,7 +52,11 @@ public class ReteooBuilder {
 		}
 		return objectTypeNames;
 	}
-
+	/**
+	 * 生成objectType,并包括下面的alphaNode
+	 * @param rule
+	 * @param reteTempData
+	 */
 	private void createObjectType(Rule rule,
 			BuildReteTempData reteTempData) {
 		HashMap<String, ObjectTypeNode> objectTypeNodes = entryPoint
@@ -77,18 +82,53 @@ public class ReteooBuilder {
 						.getClassNameAllPath(), objectTypeNode);
 			}
 		}
+		
+		buildJoinNodes(joinNodes,rule);
 		return ;
 	}
-	private void buildJoinNodes(List<JoinNode> joinNodes){
-		if(joinNodes.size()==0){//rulenode上没有betanode则直接连接到alphanode
-			
-		}else{
-			for(int i=0;i<joinNodes.size();i++){
-				
+	/**
+	 * 为每个joinode链接左右两输入
+	 * @param joinNodes
+	 */
+	private void buildJoinNodes(List<JoinNode> joinNodes,Rule rule){
+		if(joinNodes.size()==0){//rulenode上没有betanode则直接连接到alphaMemoryNode
+			List<AlphaMemoryNode> alphaMemoryNodes=traverseAndFindAlphaMemoryNodes(rule);
+			RuleNode ruleNode=new RuleNode(rule, alphaMemoryNodes);
+			for(AlphaMemoryNode alphaMemoryNode:alphaMemoryNodes){
+				alphaMemoryNode.setJoinNode(ruleNode);
 			}
+		}else{
+			int level=1;
+			JoinNode previousJoinNode=null;
+			for(JoinNode joinNode:joinNodes){
+				if(level==1){
+					if(previousJoinNode==null){
+						ObjectTypeNode rightInputNode=findRightInput(joinNode, rule);
+						List<Node> rightInputMemorynodes=traverseObjectTypeNode(rule, rightInputNode);
+						for(Node node:rightInputMemorynodes){
+							AlphaMemoryNode alphaMemoryNode=(AlphaMemoryNode) node;
+							alphaMemoryNode.setJoinNode(joinNode);
+							joinNode.setRightInputNode(alphaMemoryNode);
+						}
+						
+					}
+				}else{
+					joinNode.setRightInputNode(previousJoinNode);
+					previousJoinNode.setNextJoinOrRuleNode(joinNode);
+				}
+				previousJoinNode=joinNode;
+				level++;
+			}
+			joinNodes.get(joinNodes.size()-1).buildRuleNode(rule);
 		}
 	}
-	private ObjectType findRightInput(JoinNode joinNode,Rule rule ){
+	/**
+	 * 根据joinode，找到右输入ObjectTypeNode
+	 * @param joinNode
+	 * @param rule
+	 * @return
+	 */
+	private ObjectTypeNode findRightInput(JoinNode joinNode,Rule rule ){
 		AlphaMemoryNode alphaMemoryNode=(AlphaMemoryNode)joinNode.getLeftInputNode();
 		BuildReteTempData buildReteTempData=getBuildReteTempData(rule);
 		String rightInputVarString=null;
@@ -105,14 +145,38 @@ public class ReteooBuilder {
 				rightObjectTypeNode=entryPoint.getObjectTypeNodes().get(column.getTypeAllpath());
 			}
 		}
-		
+		return rightObjectTypeNode;
 	}
+	/**
+	 * 根据ObjectTypeNode得到最底层的alphamemorynode
+	 * @param rule
+	 * @param objectTypeNode
+	 * @return
+	 */
 	private List<Node> traverseObjectTypeNode(Rule rule,ObjectTypeNode objectTypeNode){
 		List<Node>  rightInputNodes=new ArrayList<Node>();
 		Iterator it = objectTypeNode.getAlphaNodes().entrySet().iterator();   
         while (it.hasNext()) {   
             Map.Entry entry = (Entry) it.next();  
+            AlphaNode alphaNode=(AlphaNode)entry.getValue();
+            if(alphaNode.getRuleName().equals(rule.getName())){
+            	rightInputNodes.addAll(alphaNode.traverseAlphaNode(rule));
+            }
+        }
+        return rightInputNodes;
             
+	}
+	private List<AlphaMemoryNode> traverseAndFindAlphaMemoryNodes(Rule rule){
+		Iterator it= entryPoint.getObjectTypeNodes().entrySet().iterator();
+		List<AlphaMemoryNode> alphaMemoryNodes=new ArrayList<AlphaMemoryNode>();
+		while(it.hasNext()){
+			Map.Entry entry=(Entry) it.next();
+			ObjectTypeNode objectTypeNode=(ObjectTypeNode) entry.getValue();
+			if(objectTypeNode.getRuleName().equals(rule.getName())){
+				alphaMemoryNodes.addAll(objectTypeNode.traverseAndFindAlphaMemoryNodes(rule));
+			}
+		}
+		return alphaMemoryNodes;
 	}
 	
 }
