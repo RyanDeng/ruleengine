@@ -34,7 +34,7 @@ public class BuildReteTempData {
 			return false;
 		}
 	}
-	public List<String> getJoinNodeInputs(String expre){
+	public List<String> getVariableList(String expre){
 		List<String> results=new ArrayList<String>();
 		for(String var:variables){
 			if(expre.indexOf(var)!=-1){

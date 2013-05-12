@@ -2,6 +2,7 @@ package cn.dc.compiler;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 
 public class EntryPoint implements Serializable{
 	/**
@@ -16,11 +17,12 @@ public class EntryPoint implements Serializable{
 		this.objectTypeNodes = objectTypeNodes;
 	}
 
-	public AlphaMemoryNode insert(Object obj){
+	public List<AlphaMemoryNode> insert(Object obj){
 		ObjectTypeNode objectTypeNode=objectTypeNodes.get(obj.getClass().getName());
 		if(objectTypeNode!=null){
-			objectTypeNode.insert(obj);
+			return objectTypeNode.insert(obj);
 		}
+		return null;
 	}
 	
 }

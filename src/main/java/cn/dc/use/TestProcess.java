@@ -29,5 +29,9 @@ public class TestProcess {
 		account1.setBalance(42.0);
 		
 		workingMemory.insert(userAccount);
+		workingMemory.insert(account);
+		workingMemory.insert(account1);
+		
+		workingMemory.fireAllRules();
 	}
 }

@@ -16,6 +16,8 @@ public class JoinNode implements Serializable, Node {
 	private Node leftInputNode;
 	private Node rightInputNode;
 	private String ruleName;
+	private String leftVariable;
+	private String rightVariable;
 
 	public String getRuleName() {
 		return ruleName;
@@ -72,4 +74,21 @@ public class JoinNode implements Serializable, Node {
 	public void buildRuleNode(Rule rule){
 		nextJoinOrRuleNode=new RuleNode(rule, this);
 	}
+
+	public String getLeftVariable() {
+		return leftVariable;
+	}
+
+	public void setLeftVariable(String leftVariable) {
+		this.leftVariable = leftVariable;
+	}
+
+	public String getRightVariable() {
+		return rightVariable;
+	}
+
+	public void setRightVariable(String rightVariable) {
+		this.rightVariable = rightVariable;
+	}
+	
 }

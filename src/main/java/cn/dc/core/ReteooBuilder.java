@@ -87,14 +87,15 @@ public class ReteooBuilder {
 			}
 		}
 		
-		buildJoinNodes(joinNodes,rule);
+		buildJoinNodes(joinNodes,rule,reteTempData);
 		return ;
 	}
 	/**
 	 * 为每个joinode链接左右两输入
 	 * @param joinNodes
+	 * @param reteTempData 
 	 */
-	private void buildJoinNodes(List<JoinNode> joinNodes,Rule rule){
+	private void buildJoinNodes(List<JoinNode> joinNodes,Rule rule, BuildReteTempData reteTempData){
 		if(joinNodes.size()==0){//rulenode上没有betanode则直接连接到alphaMemoryNode
 			List<AlphaMemoryNode> alphaMemoryNodes=traverseAndFindAlphaMemoryNodes(rule);
 			RuleNode ruleNode=new RuleNode(rule, alphaMemoryNodes);
@@ -113,12 +114,16 @@ public class ReteooBuilder {
 							AlphaMemoryNode alphaMemoryNode=(AlphaMemoryNode) node;
 							alphaMemoryNode.setJoinNode(joinNode);
 							joinNode.setRightInputNode(alphaMemoryNode);
+							String rightVar=reteTempData.getVariableList(alphaMemoryNode.getPreviousNode().getConditionValue()).get(0);
+							joinNode.setRightVariable(rightVar);
 						}
 						
 					}
 				}else{
 					joinNode.setRightInputNode(previousJoinNode);
 					previousJoinNode.setNextJoinOrRuleNode(joinNode);
+					String rightVar=previousJoinNode.getLeftVariable();
+					joinNode.setRightVariable(rightVar);
 				}
 				previousJoinNode=joinNode;
 				level++;
@@ -136,7 +141,7 @@ public class ReteooBuilder {
 		AlphaMemoryNode alphaMemoryNode=(AlphaMemoryNode)joinNode.getLeftInputNode();
 		BuildReteTempData buildReteTempData=getBuildReteTempData(rule);
 		String rightInputVarString=null;
-		List<String> inputsVar=buildReteTempData.getJoinNodeInputs(joinNode.getExpression());
+		List<String> inputsVar=buildReteTempData.getVariableList(joinNode.getExpression());
 		//判断返回的两个参数名字，左输入含有则另一个是右输入
 		if(alphaMemoryNode.getPreviousNode().getConditionValue().indexOf(inputsVar.get(0))!=-1){
 			rightInputVarString= inputsVar.get(1);

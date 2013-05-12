@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.mvel2.MVEL;
+import org.mvel2.templates.res.EvalNode;
+
 import cn.dc.core.Column;
 import cn.dc.core.Condition;
 import cn.dc.core.Rule;
@@ -84,17 +87,23 @@ public class ObjectTypeNode implements Serializable,Node{
 				joinConditions.add(joinCondition);
 				//column只有一个joinCondition就直接连接
 				if(index==column.getConditions().size()){
-					if(!alphaNodes.containsKey("")){
-						AlphaNode alphaNode=new AlphaNode("");
-						alphaNode.setRuleName(ruleName);
-						alphaNodes.put("", alphaNode);
+					if(index==1){
+						if(!alphaNodes.containsKey("")){
+							AlphaNode alphaNode=new AlphaNode("");
+							alphaNode.setRuleName(ruleName);
+							alphaNodes.put("", alphaNode);
+						}
+						leftInput=alphaNodes.get("").buildNextNodes();
+						leftInput.setRuleName(ruleName);
+					}else{
+						leftInput=previousAlphaNode.buildNextNodes();
+						leftInput.setRuleName(ruleName);
 					}
-					leftInput=alphaNodes.get("").buildNextNodes();
-					leftInput.setRuleName(ruleName);
 				}
 			}else{
 				AlphaNode alphaNode=new AlphaNode(condition.getExpression());
 				alphaNode.setRuleName(ruleName);
+				alphaNode.setVariable(reteTempData.getVariableList(condition.getExpression()).get(0));
 				if(condition.getAndOr()==AndOr.AND){
 					//之前有父alphaNode
 					if(previousAlphaNode!=null){
@@ -125,9 +134,10 @@ public class ObjectTypeNode implements Serializable,Node{
 		//若有joinCondition,则所有的这些condition都加上leftInput
 		for(JoinCondition joinCondition:joinConditions){
 			joinCondition.setLeftInputNode(leftInput);
+			String leftVar=reteTempData.getVariableList(leftInput.getPreviousNode().getConditionValue()).get(0);
 		}
 		//够在betanode
-		return createBetaNode(joinConditions);
+		return createBetaNode(joinConditions,reteTempData);
 	}
 	private void makeConditionAndWhenJoinCondition(Column column,BuildReteTempData reteTempData){
 		boolean isJoinCondition=false;
@@ -141,14 +151,16 @@ public class ObjectTypeNode implements Serializable,Node{
 			condition.setAndOr("AND");
 		}
 	}
-	private List<JoinNode> createBetaNode(List<JoinCondition> joinConditions){
+	private List<JoinNode> createBetaNode(List<JoinCondition> joinConditions, BuildReteTempData reteTempData){
 		List<JoinNode> results=new ArrayList<JoinNode>();
 		if(joinConditions!=null){
 			for(JoinCondition joinCondition:joinConditions){
 				JoinNode joinNode=new JoinNode(joinCondition.getCondition().getExpression());
 				joinNode.setRuleName(ruleName);
-			 joinCondition.getLeftInputNode().setJoinNode(joinNode);
+				joinCondition.getLeftInputNode().setJoinNode(joinNode);
 				joinNode.setLeftInputNode(joinCondition.getLeftInputNode());
+				String leftVar=reteTempData.getVariableList(joinCondition.getLeftInputNode().getPreviousNode().getConditionValue()).get(0);
+				joinNode.setLeftVariable(leftVar);
 				results.add(joinNode);
 			}
 		}
@@ -175,8 +187,18 @@ public class ObjectTypeNode implements Serializable,Node{
 //			}
 //		}
 //	}
-	public AlphaMemoryNode insert(Object obj) {
+	public List<AlphaMemoryNode> insert(Object obj) {
+		List<AlphaMemoryNode> alphaMemoryNodes=new ArrayList<AlphaMemoryNode>();
+		Iterator it= alphaNodes.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry entry=(Entry) it.next();
+			AlphaNode alphaNode=(AlphaNode) entry.getValue();
+			if(alphaNode.eval(obj)){
+				alphaMemoryNodes.addAll(alphaNode.insert(obj));
+			}
+		}
+		return alphaMemoryNodes;
 		
-		
-	}
+	} 
+	
 }

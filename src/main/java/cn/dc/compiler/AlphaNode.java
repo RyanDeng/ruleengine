@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.mvel2.MVEL;
+
 import cn.dc.core.Rule;
 
 public class AlphaNode implements Serializable,Node{
@@ -19,7 +21,7 @@ public class AlphaNode implements Serializable,Node{
 	private String conditionValue;
 	private HashMap<String, AlphaNode> nextNodes;
 	private String ruleName;
-	
+	private String variable;
 
 	public String getRuleName() {
 		return ruleName;
@@ -42,6 +44,13 @@ public class AlphaNode implements Serializable,Node{
 		if(!nextNodes.containsKey(nextNode.getConditionValue())){
 			nextNodes.put(nextNode.getConditionValue(), nextNode);
 		}
+	}
+	
+	public String getVariable() {
+		return variable;
+	}
+	public void setVariable(String variable) {
+		this.variable = variable;
 	}
 	/**
 	 * 没有条件，则直接连到AlphaMemoryNode
@@ -87,5 +96,30 @@ public class AlphaNode implements Serializable,Node{
         }
         return alphaMemoryNodes;
 	}
-	
+	public boolean eval(Object obj){
+		if(conditionValue.equals("")){
+			return true;
+		}
+		Serializable compiled =  MVEL.compileExpression(conditionValue);
+		 Map vars = new HashMap();
+		 vars.put(variable, obj);
+		 Object res=MVEL.executeExpression(compiled,vars);
+		 return Boolean.parseBoolean((String)res);
+	}
+	public List<AlphaMemoryNode> insert(Object obj) {
+		Iterator it= nextNodes.entrySet().iterator();
+		List<AlphaMemoryNode> alphaMemoryNodes=new ArrayList<AlphaMemoryNode>();
+		while(it.hasNext()){
+			Map.Entry entry=(Entry) it.next();
+			AlphaNode alphaNode=(AlphaNode) entry.getValue();
+			if(alphaNode instanceof AlphaMemoryNode){
+				alphaMemoryNodes.add((AlphaMemoryNode)alphaNode);
+			}else{
+				if(alphaNode.eval(obj)){
+					alphaNode.insert(obj);
+				}
+			}
+		}
+		return alphaMemoryNodes;
+	}
 }
