@@ -42,6 +42,11 @@ public class Test {
 //		System.out.println(map);
 		UserAccount account=new UserAccount();
 		System.out.println(account.getClass().getName());
+		HashSet<String> sets=new HashSet<String>();
+		sets.add("abC");sets.add("22");sets.add("tyuty");
+		for(String aStri:sets){
+			System.out.println(aStri);
+		}
 //		List<Integer> as=new ArrayList<Integer>();
 //		as.add(1);as.add(2);
 //		System.out.println(as.get(2));

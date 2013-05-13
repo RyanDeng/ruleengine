@@ -61,5 +61,19 @@ public class App
         vars2.put("account", account);
         Object res2=MVEL.executeExpression(compiledTODO,vars2);
         System.out.println(res2);
+        
+        
+        System.out.println("======================");
+        Serializable compiled123 =MVEL.compileExpression("account.userId==userAccount.userId");
+		Map vars123 = new HashMap();
+		Account leftobj=new Account();
+		leftobj.setUserId("1");
+		leftobj.setBalance(42.0);
+		UserAccount rightobj=new UserAccount();
+		rightobj.setUserId("1");
+		 vars.put("account", leftobj);
+		 vars.put("userAccount", rightobj);
+		 Boolean res123=(Boolean) MVEL.executeExpression(compiled123,vars);
+		 System.out.println(res123);
     }
 }

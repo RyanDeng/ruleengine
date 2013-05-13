@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package name="cn.dc">
-<import name="cn.dc.ruleengine.UserAccount"/>
-<import name="cn.dc.ruleengine.Account"/>
+<import name="cn.dc.use.UserAccount"/>
+<import name="cn.dc.use.Account"/>
 <rule name="account">
 	<rule-attribute name="salience" value="10" />
 	<when>
 		<column type="UserAccount" name="userAccount">
-			<condition>  userAccount.userId>2</condition>
+			<condition>  userAccount.userId==1</condition>
 		</column>
 		<column type="Account" name="account">
 			<condition>account.userId==userAccount.userId</condition>

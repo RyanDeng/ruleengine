@@ -1,29 +1,35 @@
 package cn.dc.runtime;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.mvel2.optimizers.impl.refl.nodes.ArrayAccessor;
 
+import cn.dc.compiler.AlphaMemoryNode;
 import cn.dc.compiler.ObjectType;
 
 public class BuildReteTempData {
-	private List<String> variables;
+	private Map<String,String> variables;
 	//private List<String> objectTypeNames;
-	public BuildReteTempData(List<String> variables){
+	public BuildReteTempData(Map<String,String> variables){
 		this.variables=variables;
 		//this.objectTypeNames=objectTypeNames;
 	}
-	public List<String> getVariables() {
+	public Map<String,String> getVariables() {
 		return variables;
 	}
-	public void setVariables(List<String> variables) {
+	public void setVariables(Map<String,String> variables) {
 		this.variables = variables;
 	}
 	public boolean isConditionJoin(String expression){
 		int count=0;
-		for(String var:variables){
-			if (expression.indexOf(var)!=-1) {
+		Iterator it=variables.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry entry=(Entry)it.next();
+			if(expression.indexOf(entry.getValue().toString())!=-1){
 				count++;
 			}
 		}
@@ -34,12 +40,17 @@ public class BuildReteTempData {
 			return false;
 		}
 	}
-	public List<String> getVariableList(String expre){
+	public List<String> getVariableList(String expre,String classPath){
 		List<String> results=new ArrayList<String>();
-		for(String var:variables){
-			if(expre.indexOf(var)!=-1){
-				results.add(var);
+		Iterator it=variables.entrySet().iterator();
+		while(it.hasNext()){
+			Map.Entry entry=(Entry)it.next();
+			if(expre.indexOf(entry.getValue().toString())!=-1){
+				results.add(entry.getValue().toString());
 			}
+		}
+		if(results.size()==0){
+			results.add(variables.get(classPath));
 		}
 		return results;
 	}

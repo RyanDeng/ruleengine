@@ -126,24 +126,33 @@ public class JoinNode implements Serializable, Node {
 						betaMemory.insert(map);
 					}
 				}
-				if(nextJoinOrRuleNode instanceof JoinNode){
-					return ((JoinNode) nextJoinOrRuleNode).fireEval(this);
-				}else{
-					return ()nextJoinOrRuleNode;
-				}
+			//右输入为joinNode
 			}else if(rightInputNode instanceof JoinNode){
 				JoinNode rightInputJoinNode=(JoinNode)rightInputNode;
-				
-			}
+				for(Map<String, Object> map:rightInputJoinNode.getBetaMemory().getReadyObjects()){
+					HashMap<String,Object> mapAll=new HashMap<String, Object>();
+					mapAll.putAll(map);
+					mapAll.put(leftVariable, leftObj);
+					if(eval(mapAll)){
+						betaMemory.insert(mapAll);
+					}
+				}
+			}		
 		}
+		if(nextJoinOrRuleNode instanceof RuleNode){
+			return (RuleNode)nextJoinOrRuleNode;
+		}else if(nextJoinOrRuleNode instanceof JoinNode){
+			return ((JoinNode) nextJoinOrRuleNode).fireEval(this);
+		}
+		return null;
 	}
 	private boolean eval(Object leftobj,Object rightobj){
 		Serializable compiled =MVEL.compileExpression(expression);
 		Map vars = new HashMap();
 		 vars.put(leftVariable, leftobj);
-		 vars.put(rightInputNode, rightobj);
-		 Object res=MVEL.executeExpression(compiled,vars);
-		 return Boolean.parseBoolean((String)res);
+		 vars.put(rightVariable, rightobj);
+		 Boolean res=(Boolean) MVEL.executeExpression(compiled,vars);
+		 return res;
 	}
 	private boolean eval(Map map){
 		Serializable compiled =MVEL.compileExpression(expression);

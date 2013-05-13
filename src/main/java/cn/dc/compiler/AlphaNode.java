@@ -22,6 +22,7 @@ public class AlphaNode implements Serializable,Node{
 	private HashMap<String, AlphaNode> nextNodes;
 	private String ruleName;
 	private String variable;
+	private String objectTypeString;
 
 	public String getRuleName() {
 		return ruleName;
@@ -30,14 +31,22 @@ public class AlphaNode implements Serializable,Node{
 		this.ruleName = ruleName;
 	}
 	public AlphaNode(){}
-	public AlphaNode(String conditionValue){
+	public AlphaNode(String conditionValue,String objtypeString){
 		this.conditionValue=conditionValue;
+		this.objectTypeString=objtypeString;
 	}
 	public String getConditionValue() {
 		return conditionValue;
 	}
 	public void setConditionValue(String conditionValue) {
 		this.conditionValue = conditionValue;
+	}
+	
+	public String getObjectTypeString() {
+		return objectTypeString;
+	}
+	public void setObjectTypeString(String objectTypeString) {
+		this.objectTypeString = objectTypeString;
 	}
 	public void buildNextNodes(AlphaNode nextNode){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
@@ -103,8 +112,8 @@ public class AlphaNode implements Serializable,Node{
 		Serializable compiled =  MVEL.compileExpression(conditionValue);
 		 Map vars = new HashMap();
 		 vars.put(variable, obj);
-		 Object res=MVEL.executeExpression(compiled,vars);
-		 return Boolean.parseBoolean((String)res);
+		 Boolean res=(Boolean) MVEL.executeExpression(compiled,vars);
+		 return res;
 	}
 	public List<AlphaMemoryNode> insert(Object obj) {
 		Iterator it= nextNodes.entrySet().iterator();
