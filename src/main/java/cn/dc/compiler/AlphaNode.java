@@ -114,6 +114,7 @@ public class AlphaNode implements Serializable,Node{
 			AlphaNode alphaNode=(AlphaNode) entry.getValue();
 			if(alphaNode instanceof AlphaMemoryNode){
 				alphaMemoryNodes.add((AlphaMemoryNode)alphaNode);
+				((AlphaMemoryNode) alphaNode).getReadyObjects().add(obj);
 			}else{
 				if(alphaNode.eval(obj)){
 					alphaNode.insert(obj);
