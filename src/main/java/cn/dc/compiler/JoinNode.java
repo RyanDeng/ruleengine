@@ -171,4 +171,9 @@ public class JoinNode implements Serializable, Node {
 		}
 		return null;
 	}
+
+	public void dispose() {
+		// TODO Auto-generated method stub
+		betaMemory.getReadyObjects().clear();
+	}
 }

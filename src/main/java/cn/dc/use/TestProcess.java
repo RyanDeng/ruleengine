@@ -20,12 +20,12 @@ public class TestProcess {
 		WorkingMemory workingMemory=ruleBase.newWorkingMemory();
 		
 		UserAccount userAccount=new UserAccount();
-		userAccount.setUserId("1");
+		userAccount.setUserId("2");
 		Account account=new Account();
-		account.setUserId("1");
+		account.setUserId("2");
 		account.setBalance(20.0);
 		Account account1=new Account();
-		account1.setUserId("1");
+		account1.setUserId("2");
 		account1.setBalance(42.0);
 		
 		workingMemory.insert(userAccount);
@@ -33,5 +33,6 @@ public class TestProcess {
 		workingMemory.insert(account1);
 		
 		workingMemory.fireAllRules();
+		workingMemory.dispose();
 	}
 }

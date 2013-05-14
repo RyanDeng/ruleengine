@@ -223,5 +223,10 @@ public class ObjectTypeNode implements Serializable, Node {
 		return alphaMemoryNodes;
 
 	}
-
+	public void dispose(){
+		for(Map.Entry entry:alphaNodes.entrySet()){
+			((AlphaNode)entry.getValue()).dispose();
+		}
+	}
 }
+

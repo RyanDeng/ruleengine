@@ -41,6 +41,9 @@ public class AlphaMemoryNode extends AlphaNode implements Node{
 	public void setPreviousNode(AlphaNode previousNode) {
 		this.previousNode = previousNode;
 	}
-	
+	public void dispose(){
+		joinNode.dispose();
+		readyObjects.clear();
+	}
 	
 }

@@ -53,14 +53,16 @@ public class App
         Map vars = new HashMap();
         vars.put("userAccount", userAccount2);
         vars.put("account", account);
-        
         Object res1=MVEL.executeExpression(compiled,vars);
         System.out.println(res1);
-        Serializable compiledTODO =MVEL.compileExpression("System.out.println(account.balance);System.out.println(account.getUserId())");
+        
+        System.out.println("==~~~~~~~~~~~~~~~~~~");
+        Serializable compiledTODO =MVEL.compileExpression("account.setUserId('6');System.out.println(account.balance);");
         Map vars2=new HashMap();
         vars2.put("account", account);
         Object res2=MVEL.executeExpression(compiledTODO,vars2);
         System.out.println(res2);
+        System.out.println("+"+account.getUserId());
         
         
         System.out.println("======================");

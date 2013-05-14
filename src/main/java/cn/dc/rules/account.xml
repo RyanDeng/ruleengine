@@ -6,13 +6,14 @@
 	<rule-attribute name="salience" value="10" />
 	<when>
 		<column type="UserAccount" name="userAccount">
-			<condition>  userAccount.userId==1</condition>
+			<condition>  userAccount.userId &lt;= 2 </condition>
 		</column>
 		<column type="Account" name="account">
 			<condition>account.userId==userAccount.userId</condition>
 		</column>
 	</when>
 	<then>
+		account.setBalance(account.getBalance()+1);
 		System.out.println(account.getBalance());
 	</then>
 </rule>

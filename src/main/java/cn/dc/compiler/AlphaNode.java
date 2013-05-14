@@ -132,4 +132,14 @@ public class AlphaNode implements Serializable,Node{
 		}
 		return alphaMemoryNodes;
 	}
+	public void dispose() {
+		for(Map.Entry entry:nextNodes.entrySet()){
+			if(entry.getValue() instanceof AlphaNode){
+				((AlphaNode)entry.getValue()).dispose();
+			}else if(entry.getValue() instanceof AlphaMemoryNode){
+				((AlphaMemoryNode)entry.getValue()).dispose();
+			}
+		}
+		
+	}
 }

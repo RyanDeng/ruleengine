@@ -7,6 +7,7 @@ import java.util.Queue;
 
 import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
+import cn.dc.agenda.Agenda;
 import cn.dc.compiler.AlphaMemoryNode;
 import cn.dc.compiler.JoinNode;
 import cn.dc.compiler.RuleNode;
@@ -18,17 +19,19 @@ public class WorkingMemory {
 	private List<AlphaMemoryNode> alphaMemoryNodes;
 	private List<AlphaMemoryNode> traversedAlphaMemoryNodes;
 	private Queue<RuleNode> ruleQueue;
-
+	private Agenda agenda;
+	
 	public WorkingMemory(RuleBase ruleBase) {
 		this.ruleBase = ruleBase;
 		memoryList = new ArrayList<Object>();
 		alphaMemoryNodes = new ArrayList<AlphaMemoryNode>();
 		traversedAlphaMemoryNodes = new ArrayList<AlphaMemoryNode>();
 		ruleQueue=new LinkedList<RuleNode>();
+		agenda=new Agenda();
 	}
 
 	public Agenda getAgenda() {
-		return null;
+		return agenda;
 
 	}
 
@@ -44,12 +47,19 @@ public class WorkingMemory {
 	public int fireAllRules() {
 		insertObjects();
 		getRuleQueue();
+		
+		for(RuleNode ruleNode:ruleQueue){
+			agenda.insertIntoAgenda(ruleNode);
+		}
+		agenda.selectRuleToFire();
 		return 0;
 	}
 
 
 	public void dispose() {
-		// TODO:
+		ruleBase.getEntryPoint().dispose();
+
+		agenda.dispose();
 	}
 
 	/**

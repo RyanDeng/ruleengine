@@ -3,6 +3,7 @@ package cn.dc.compiler;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EntryPoint implements Serializable{
 	/**
@@ -23,6 +24,11 @@ public class EntryPoint implements Serializable{
 			return objectTypeNode.insert(obj);
 		}
 		return null;
+	}
+	public void dispose(){
+		for(Map.Entry entry:objectTypeNodes.entrySet()){
+			((ObjectTypeNode)entry.getValue()).dispose();
+		}
 	}
 	
 }

@@ -1,6 +1,7 @@
 package cn.dc.compiler;
 
 import java.util.List;
+import java.util.Map;
 
 import cn.dc.core.Rule;
 
@@ -12,6 +13,7 @@ public class RuleNode extends JoinNode implements Node {
 	private int salience;
 	
 	private List<AlphaMemoryNode> alphaMemoryNodes;
+	
 	public RuleNode(Rule rule){
 		this.ruleName=rule.getName();
 		this.thenStatements=rule.getThen();
@@ -44,5 +46,13 @@ public class RuleNode extends JoinNode implements Node {
 	public void setRuleName(String ruleName) {
 		this.ruleName = ruleName;
 	}
-	
+	public int getSalience() {
+		return salience;
+	}
+	public List<AlphaMemoryNode> getAlphaMemoryNodes() {
+		return alphaMemoryNodes;
+	}
+	public void dispose(){
+		
+	}
 }
