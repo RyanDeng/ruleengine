@@ -1,7 +1,9 @@
 package cn.dc.compiler;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class AlphaMemoryNode extends AlphaNode implements Node{
@@ -14,11 +16,12 @@ public class AlphaMemoryNode extends AlphaNode implements Node{
 	
 	private Set<Object> readyObjects =new HashSet<Object>();
 	
-	private JoinNode joinNode;
+	private List<JoinNode> joinNodes;
 	
-	private AlphaNode previousNode;
-	public AlphaMemoryNode(AlphaNode alphaNode){
-		this.previousNode=alphaNode;
+	private List<AlphaNode> previousNodes;
+	public AlphaMemoryNode(){
+		this.joinNodes=new ArrayList<JoinNode>();
+		this.previousNodes=new ArrayList<AlphaNode>();
 	}
 	
 	public Set<Object> getReadyObjects() {
@@ -27,11 +30,11 @@ public class AlphaMemoryNode extends AlphaNode implements Node{
 	public void setReadyObjects(Set<Object> readyObjects) {
 		this.readyObjects = readyObjects;
 	}
-	public JoinNode getJoinNode() {
-		return joinNode;
+	public List<JoinNode> getJoinNodes() {
+		return joinNodes;
 	}
-	public void setJoinNode(JoinNode joinNode) {
-		this.joinNode = joinNode;
+	public void setJoinNodes(List<JoinNode> joinNodes) {
+		this.joinNodes = joinNodes;
 	}
 
 	public AlphaNode getPreviousNode() {
@@ -42,7 +45,9 @@ public class AlphaMemoryNode extends AlphaNode implements Node{
 		this.previousNode = previousNode;
 	}
 	public void dispose(){
-		joinNode.dispose();
+		for(JoinNode joinNode:joinNodes){
+			joinNode.dispose();
+		}
 		readyObjects.clear();
 	}
 	

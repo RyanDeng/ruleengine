@@ -25,7 +25,7 @@ public class ObjectTypeNode implements Serializable, Node {
 	 */
 	private static final long serialVersionUID = 1L;
 	private ObjectType objectType;
-	private String pkgName;
+	private String pkgName;//rule的包名暂定需不需要
 	private String ruleName;
 	private HashMap<String, AlphaNode> alphaNodes;
 

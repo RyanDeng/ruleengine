@@ -1,18 +1,8 @@
 package cn.dc.ruleengine;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import javax.print.attribute.HashAttributeSet;
-
-import cn.dc.core.Condition.AndOr;
 import cn.dc.use.UserAccount;
-import cn.dc.util.StringParser;
 
 public class Test {
 
