@@ -64,7 +64,28 @@ public class ObjectTypeNode implements Serializable, Node {
 	public void setPkgName(String pkgName) {
 		this.pkgName = pkgName;
 	}
-
+	public void buildAlphaNode(Column column, BuildReteTempData reteTempData){
+		alphaNodes = alphaNodes == null ? new HashMap<String, AlphaNode>()
+				: alphaNodes;
+		if(column.getConditions() == null){
+			AlphaNode alphaNodeNull=new AlphaNode("", column.getTypeAllpath());
+			alphaNodeNull.buildself(ruleName);
+			if (!alphaNodes.containsKey("")) {
+				alphaNodes.put("", alphaNodeNull);
+				alphaNodeNull.buildNextNodes();
+			}
+			return ;
+		}
+		
+		for(Condition condition: column.getConditions()){
+			
+		}
+	}
+	public void buildself(Rule rule,Column column,BuildReteTempData buildReteTempData){
+		this.objectType=new ObjectType(column.getTypeAllpath());
+		this.setRuleName(rule.getName());
+		this.buildAlphaNode(column, buildReteTempData);
+	}
 	public List<JoinNode> buildAlphaNode(Column column,
 			BuildReteTempData reteTempData, String ruleName) {
 		alphaNodes = alphaNodes == null ? new HashMap<String, AlphaNode>()

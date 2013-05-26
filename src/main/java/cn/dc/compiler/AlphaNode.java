@@ -61,6 +61,12 @@ public class AlphaNode implements Serializable,Node{
 	public void setVariable(String variable) {
 		this.variable = variable;
 	}
+	
+	public void buildself(String ruleName){
+		this.setRuleName(ruleName);
+		buildNextNodes();
+	}
+	
 	/**
 	 * 没有条件，则直接连到AlphaMemoryNode
 	 */
@@ -68,7 +74,7 @@ public class AlphaNode implements Serializable,Node{
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
 		AlphaMemoryNode node=null;
 		if(!nextNodes.containsKey("")){
-			node=new AlphaMemoryNode(this);
+			node=new AlphaMemoryNode();
 			nextNodes.put("", node);
 		}
 		return node;

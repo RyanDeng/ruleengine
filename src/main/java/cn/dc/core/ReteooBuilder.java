@@ -55,12 +55,32 @@ public class ReteooBuilder {
 		}
 		return objectTypeNames;
 	}
+	//改写
+	private void buildObjectTypeNode(Rule rule,BuildReteTempData reteTempData){
+		HashMap<String, ObjectTypeNode> objectTypeNodes = entryPoint
+				.getObjectTypeNodes() == null ? new HashMap<String, ObjectTypeNode>()
+				: entryPoint.getObjectTypeNodes();
 
+		if (entryPoint.getObjectTypeNodes() == null) {
+			entryPoint.setObjectTypeNodes(objectTypeNodes);
+		}
+		for(Column column : rule.getColumns()){
+			ObjectTypeNode objectTypeNode = new ObjectTypeNode(rule
+									.getContainerPackage().getName());
+			objectTypeNode.buildself(rule, column, getBuildReteTempData(rule));
+			if (!objectTypeNodes.containsKey(objectTypeNode.getObjectType()
+					.getClassNameAllPath())) {
+				objectTypeNodes.put(objectTypeNode.getObjectType()
+						.getClassNameAllPath(), objectTypeNode);
+			}
+		}
+	}
 	/**
 	 * 生成objectType,并包括下面的alphaNode
 	 * 
 	 * @param rule
 	 * @param reteTempData
+	 * 被改写
 	 */
 	private void createObjectType(Rule rule, BuildReteTempData reteTempData) {
 		HashMap<String, ObjectTypeNode> objectTypeNodes = entryPoint
