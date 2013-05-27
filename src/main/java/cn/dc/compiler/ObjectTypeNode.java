@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 
 import org.mvel2.MVEL;
 import org.mvel2.templates.res.EvalNode;
+import org.mvel2.util.ThisLiteral;
 
 import cn.dc.core.Column;
 import cn.dc.core.Condition;
@@ -69,15 +70,63 @@ public class ObjectTypeNode implements Serializable, Node {
 				: alphaNodes;
 		if(column.getConditions() == null){
 			AlphaNode alphaNodeNull=new AlphaNode("", column.getTypeAllpath());
-			alphaNodeNull.buildself(ruleName);
+			alphaNodeNull.buildself(ruleName,null,true);
 			if (!alphaNodes.containsKey("")) {
 				alphaNodes.put("", alphaNodeNull);
-				alphaNodeNull.buildNextNodes();
 			}
 			return ;
 		}
 		
-		for(Condition condition: column.getConditions()){
+		List<AlphaNode> previousAlphaNodes = new ArrayList<AlphaNode>();//为了or关系
+		Node fatherNode=null;//为了or关系能够找到父节点进行连接
+		String variableNameString=reteTempData.getVariables().get(this.objectType.getClassNameAllPath());
+		int lastIndexOfSingleCondition=figuareIndexOfAddMemory(column.getConditions(), reteTempData);
+		for(int i=0;i<=lastIndexOfSingleCondition;i++){
+			Condition condition=column.getConditions().get(i);	
+			AlphaNode alphaNode = new AlphaNode(condition.getExpression(),
+					column.getTypeAllpath());
+			alphaNode.buildself(ruleName, variableNameString, false);
+			if(i==0){
+				addAlphaNodeToAlphaNodes(alphaNode);
+				if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
+					fatherNode=this;//预测下一个是否为or是的话把father加上去}
+				previousAlphaNode=alphaNode;
+			}else {
+				if (condition.getAndOr() == AndOr.AND) {
+					// 之前有父alphaNode
+					if (previousAlphaNode != null) {
+						previousAlphaNode.buildNextNodes(alphaNode);
+					}
+					if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
+						fatherNode=previousAlphaNode;//预测下一个是否为or是的话把father加上去}
+					previousAlphaNode=alphaNode;
+//					} else {
+//						if (!alphaNodes.containsKey(alphaNode
+//								.getConditionValue())) {
+//							alphaNodes.put(alphaNode.getConditionValue(),
+//									alphaNode);
+//						}
+//					}
+				} else if (condition.getAndOr() == AndOr.OR) {
+					// 如果为or，那之前的condition要连接到memorynode
+					if(fatherNode!=null){
+						if(fatherNode instanceof ObjectTypeNode){
+							addAlphaNodeToAlphaNodes(alphaNode);
+						}else if(fatherNode instanceof AlphaNode){
+							((AlphaNode) fatherNode).buildNextNodes(alphaNode);
+						}
+						
+						if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
+							
+						}
+					}
+					
+					if (!alphaNodes.containsKey(alphaNode.getConditionValue())) {
+						alphaNodes
+								.put(alphaNode.getConditionValue(), alphaNode);
+					}
+				}
+			}
 			
 		}
 	}
@@ -86,6 +135,33 @@ public class ObjectTypeNode implements Serializable, Node {
 		this.setRuleName(rule.getName());
 		this.buildAlphaNode(column, buildReteTempData);
 	}
+	/**
+	 * 计算第几个condition后要加alphamemorynode
+	 * @return
+	 */
+	public int figuareIndexOfAddMemory(List<Condition> conditions,BuildReteTempData buildReteTempData){
+		for(Condition cond:conditions){
+			if(buildReteTempData.isConditionJoin(cond.getExpression())){
+				return conditions.size()-2;
+			}
+		}
+		return conditions.size()-1;
+	}
+	/**
+	 * 增加alphanode到当前的alphanodes
+	 * @param alphaNode
+	 */
+	public void addAlphaNodeToAlphaNodes(AlphaNode alphaNode){
+		if (!alphaNodes.containsKey(alphaNode.getConditionValue())) {
+			alphaNodes.put(alphaNode.getConditionValue(),
+					alphaNode);
+		}else{
+			AlphaNode exsitedNode=alphaNodes.get(alphaNode.getConditionValue());
+			exsitedNode.setRuleName(this.ruleName);
+			exsitedNode.setVariable(alphaNode.getVariable());
+		}
+	}
+	
 	public List<JoinNode> buildAlphaNode(Column column,
 			BuildReteTempData reteTempData, String ruleName) {
 		alphaNodes = alphaNodes == null ? new HashMap<String, AlphaNode>()

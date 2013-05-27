@@ -62,22 +62,27 @@ public class AlphaNode implements Serializable,Node{
 		this.variable = variable;
 	}
 	
-	public void buildself(String ruleName){
+	public void buildself(String ruleName,String variableName, boolean isBuildMemory){
 		this.setRuleName(ruleName);
-		buildNextNodes();
+		if(isBuildMemory){
+			AlphaMemoryNode alphaMemoryNode=buildNextNodes(ruleName);
+		}
 	}
 	
 	/**
 	 * 没有条件，则直接连到AlphaMemoryNode
 	 */
-	public AlphaMemoryNode buildNextNodes(){
+	public AlphaMemoryNode buildNextNodes(String ruleName){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
 		AlphaMemoryNode node=null;
 		if(!nextNodes.containsKey("")){
-			node=new AlphaMemoryNode();
+			node=new AlphaMemoryNode(ruleName);
 			nextNodes.put("", node);
+			return node;
+		}else{
+			return (AlphaMemoryNode)nextNodes.get("");
 		}
-		return node;
+		
 	}
 	public List<Node> traverseAlphaNode(Rule rule){
 		List<Node>  rightInputNodes=new ArrayList<Node>();

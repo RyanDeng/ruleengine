@@ -18,10 +18,13 @@ public class AlphaMemoryNode extends AlphaNode implements Node{
 	
 	private List<JoinNode> joinNodes;
 	
-	private List<AlphaNode> previousNodes;
-	public AlphaMemoryNode(){
+	private String ruleName;
+	
+//	private List<AlphaNode> previousNodes;
+	public AlphaMemoryNode(String ruleName){
 		this.joinNodes=new ArrayList<JoinNode>();
-		this.previousNodes=new ArrayList<AlphaNode>();
+		this.ruleName=ruleName;
+		//this.previousNodes=new ArrayList<AlphaNode>();
 	}
 	
 	public Set<Object> getReadyObjects() {
@@ -37,13 +40,13 @@ public class AlphaMemoryNode extends AlphaNode implements Node{
 		this.joinNodes = joinNodes;
 	}
 
-	public AlphaNode getPreviousNode() {
-		return previousNode;
-	}
-
-	public void setPreviousNode(AlphaNode previousNode) {
-		this.previousNode = previousNode;
-	}
+//	public AlphaNode getPreviousNode() {
+//		return previousNode;
+//	}
+//
+//	public void setPreviousNode(AlphaNode previousNode) {
+//		this.previousNode = previousNode;
+//	}
 	public void dispose(){
 		for(JoinNode joinNode:joinNodes){
 			joinNode.dispose();
