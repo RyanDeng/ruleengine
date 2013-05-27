@@ -6,7 +6,8 @@
 	<rule-attribute name="salience" value="10" />
 	<when>
 		<column type="UserAccount" name="userAccount">
-			<condition>  userAccount.userId &lt;= 2 </condition>
+			<condition  bracket="left">  userAccount.userId &lt;= 2 </condition>
+			<condition andOr="AND" bracket="right">userAccount.balance>0</condition>
 		</column>
 		<column type="Account" name="account">
 			<condition>account.userId==userAccount.userId</condition>

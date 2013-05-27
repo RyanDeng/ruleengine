@@ -77,10 +77,19 @@ public class ObjectTypeNode implements Serializable, Node {
 			return ;
 		}
 		
-		List<AlphaNode> previousAlphaNodes = new ArrayList<AlphaNode>();//为了or关系
-		Node fatherNode=null;//为了or关系能够找到父节点进行连接
 		String variableNameString=reteTempData.getVariables().get(this.objectType.getClassNameAllPath());
 		int lastIndexOfSingleCondition=figuareIndexOfAddMemory(column.getConditions(), reteTempData);
+		
+	}
+	public void buildself(Rule rule,Column column,BuildReteTempData buildReteTempData){
+		this.objectType=new ObjectType(column.getTypeAllpath());
+		this.setRuleName(rule.getName());
+		this.buildAlphaNode(column, buildReteTempData);
+	}
+	private void buildAlphaNetwork(List<Condition> conditions ,int start,int end,BuildReteTempData reteTempData){
+		List<AlphaNode> previousAlphaNodes = new ArrayList<AlphaNode>();//为了or关系
+		Node fatherNode=null;//为了or关系能够找到父节点进行连接
+		
 		for(int i=0;i<=lastIndexOfSingleCondition;i++){
 			Condition condition=column.getConditions().get(i);	
 			AlphaNode alphaNode = new AlphaNode(condition.getExpression(),
@@ -88,37 +97,29 @@ public class ObjectTypeNode implements Serializable, Node {
 			alphaNode.buildself(ruleName, variableNameString, false);
 			if(i==0){
 				addAlphaNodeToAlphaNodes(alphaNode);
+				fatherNode=this;
 				if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
-					fatherNode=this;//预测下一个是否为or是的话把father加上去}
-				previousAlphaNode=alphaNode;
+					}//预测下一个是否为or是的话把father加上去}
+				previousAlphaNodes.add(alphaNode);
 			}else {
 				if (condition.getAndOr() == AndOr.AND) {
 					// 之前有父alphaNode
-					if (previousAlphaNode != null) {
+					for (AlphaNode previousAlphaNode:previousAlphaNodes) {
 						previousAlphaNode.buildNextNodes(alphaNode);
 					}
 					if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
-						fatherNode=previousAlphaNode;//预测下一个是否为or是的话把father加上去}
-					previousAlphaNode=alphaNode;
-//					} else {
-//						if (!alphaNodes.containsKey(alphaNode
-//								.getConditionValue())) {
-//							alphaNodes.put(alphaNode.getConditionValue(),
-//									alphaNode);
-//						}
-//					}
+						}//预测下一个是否为or是的话把father加上去}
+					previousAlphaNodes.clear();
+					previousAlphaNodes.add(alphaNode);
+
 				} else if (condition.getAndOr() == AndOr.OR) {
-					// 如果为or，那之前的condition要连接到memorynode
 					if(fatherNode!=null){
 						if(fatherNode instanceof ObjectTypeNode){
 							addAlphaNodeToAlphaNodes(alphaNode);
 						}else if(fatherNode instanceof AlphaNode){
 							((AlphaNode) fatherNode).buildNextNodes(alphaNode);
-						}
-						
-						if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
-							
-						}
+						}	
+						previousAlphaNodes.add(alphaNode);
 					}
 					
 					if (!alphaNodes.containsKey(alphaNode.getConditionValue())) {
@@ -130,16 +131,33 @@ public class ObjectTypeNode implements Serializable, Node {
 			
 		}
 	}
-	public void buildself(Rule rule,Column column,BuildReteTempData buildReteTempData){
-		this.objectType=new ObjectType(column.getTypeAllpath());
-		this.setRuleName(rule.getName());
-		this.buildAlphaNode(column, buildReteTempData);
+	/**
+	 * 根据左括号找到右括号的index
+	 * @param leftIndex
+	 * @param conditions
+	 * @return
+	 */
+	private int findNextRightBracketIndex(int leftIndex, List<Condition> conditions){
+		int leftCount=0;
+		for(int i=leftIndex+1;i<conditions.size();i++){
+			if(conditions.get(i).getBracket()==null) break;
+			if(conditions.get(i).getBracket().equals("left")){
+				leftCount++;
+			}else if (conditions.get(i).getBracket().equals("right")) {
+				if(leftCount>0){
+					leftCount--;
+				}else{
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 	/**
 	 * 计算第几个condition后要加alphamemorynode
 	 * @return
 	 */
-	public int figuareIndexOfAddMemory(List<Condition> conditions,BuildReteTempData buildReteTempData){
+	private int figuareIndexOfAddMemory(List<Condition> conditions,BuildReteTempData buildReteTempData){
 		for(Condition cond:conditions){
 			if(buildReteTempData.isConditionJoin(cond.getExpression())){
 				return conditions.size()-2;
@@ -151,7 +169,7 @@ public class ObjectTypeNode implements Serializable, Node {
 	 * 增加alphanode到当前的alphanodes
 	 * @param alphaNode
 	 */
-	public void addAlphaNodeToAlphaNodes(AlphaNode alphaNode){
+	private void addAlphaNodeToAlphaNodes(AlphaNode alphaNode){
 		if (!alphaNodes.containsKey(alphaNode.getConditionValue())) {
 			alphaNodes.put(alphaNode.getConditionValue(),
 					alphaNode);

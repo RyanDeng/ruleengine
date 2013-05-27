@@ -66,6 +66,7 @@ public class XMLParser {
 		if(conditionElm.attribute("andOr")!=null){
 			condition.setAndOr(conditionElm.attributeValue("andOr").replaceAll("\\s", ""));
 		}
+		condition.setBracket(conditionElm.attributeValue("bracket"));
 		return condition;
 	}
 	public static RulePackage parseForPackage(String path){
