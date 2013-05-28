@@ -88,20 +88,25 @@ public class AlphaNode implements Serializable,Node{
 			AlphaMemoryNode alphaMemoryNode=buildNextNodes(ruleName);
 		}
 	}
-	
+	public void linkAlphaMemoryNode(AlphaMemoryNode alphaMemoryNode){
+		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
+		if(!nextNodes.containsKey(alphaMemoryNode.getRuleName())){
+			nextNodes.put(alphaMemoryNode.getRuleName(), alphaMemoryNode);
+		}
+	}
 	/**
 	 * 没有条件，则直接连到AlphaMemoryNode
 	 */
-	public AlphaMemoryNode buildNextNodes(String ruleName){
+	private AlphaMemoryNode buildNextNodes(String ruleName){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
 		AlphaMemoryNode node=null;
-		if(!nextNodes.containsKey("")){
+		if(!nextNodes.containsKey(ruleName)){
 			node=new AlphaMemoryNode(ruleName);
-			nextNodes.put("", node);
+			nextNodes.put(ruleName, node);
 			return node;
 		}else{
-			nextNodes.get("").setRuleName(ruleName);
-			return (AlphaMemoryNode)nextNodes.get("");
+			nextNodes.get(ruleName).setRuleName(ruleName);
+			return (AlphaMemoryNode)nextNodes.get(ruleName);
 		}
 		
 	}

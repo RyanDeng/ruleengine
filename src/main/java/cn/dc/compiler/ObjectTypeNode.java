@@ -83,6 +83,11 @@ public class ObjectTypeNode implements Serializable, Node {
 		for(AlphaNode headNode: results.get("head")){
 			addAlphaNodeToAlphaNodes(headNode);
 		}
+		
+		AlphaMemoryNode alphaMemoryNode=new AlphaMemoryNode(this.ruleName);
+		for(AlphaNode tailNode:results.get("tail")){
+			tailNode.linkAlphaMemoryNode(alphaMemoryNode);
+		}
 	}
 	public void buildself(Rule rule,Column column,BuildReteTempData buildReteTempData){
 		this.objectType=new ObjectType(column.getTypeAllpath());
@@ -107,6 +112,7 @@ public class ObjectTypeNode implements Serializable, Node {
 				if(isTheFirst){
 					results.get("head").add(alphaNode);
 				}
+				
 				if(!isTheFirst && condition.getBracket()!=null && condition.getBracket().equals("left")){
 					int rightIndex=findNextRightBracketIndex(i, conditions);
 					Map<String, List<AlphaNode>> middleResults=buildAlphaNetwork(conditions, i, rightIndex, variableNameString);
@@ -136,6 +142,7 @@ public class ObjectTypeNode implements Serializable, Node {
 					results.get("head").addAll(middleResults.get("head"));
 					previousAlphaNodes.addAll(middleResults.get("tail"));
 					tailNodes.addAll(middleResults.get("tail"));
+					i=rightIndex;
 				}else{
 					results.get("head").add(alphaNode);
 					previousAlphaNodes.add(alphaNode);
@@ -227,7 +234,7 @@ public class ObjectTypeNode implements Serializable, Node {
 		}
 	}
 	
-	public List<JoinNode> buildAlphaNode(Column column,
+/*	public List<JoinNode> buildAlphaNode(Column column,
 			BuildReteTempData reteTempData, String ruleName) {
 		alphaNodes = alphaNodes == null ? new HashMap<String, AlphaNode>()
 				: alphaNodes;
@@ -312,7 +319,7 @@ public class ObjectTypeNode implements Serializable, Node {
 		}
 		// 够在betanode
 		return createBetaNode(joinConditions, reteTempData);
-	}
+	}*/
 
 	private void makeConditionAndWhenJoinCondition(Column column,
 			BuildReteTempData reteTempData) {
@@ -328,7 +335,7 @@ public class ObjectTypeNode implements Serializable, Node {
 		}
 	}
 
-	private List<JoinNode> createBetaNode(List<JoinCondition> joinConditions,
+	/*private List<JoinNode> createBetaNode(List<JoinCondition> joinConditions,
 			BuildReteTempData reteTempData) {
 		List<JoinNode> results = new ArrayList<JoinNode>();
 		if (joinConditions != null) {
@@ -347,7 +354,7 @@ public class ObjectTypeNode implements Serializable, Node {
 			}
 		}
 		return results;
-	}
+	}*/
 
 	public List<AlphaMemoryNode> traverseAndFindAlphaMemoryNodes(Rule rule) {
 		List<AlphaMemoryNode> alphaMemoryNodes = new ArrayList<AlphaMemoryNode>();
