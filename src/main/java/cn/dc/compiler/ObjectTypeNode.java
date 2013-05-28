@@ -65,7 +65,7 @@ public class ObjectTypeNode implements Serializable, Node {
 	public void setPkgName(String pkgName) {
 		this.pkgName = pkgName;
 	}
-	public void buildAlphaNode(Column column, BuildReteTempData reteTempData){
+	private void buildAlphaNode(Column column, BuildReteTempData reteTempData){
 		alphaNodes = alphaNodes == null ? new HashMap<String, AlphaNode>()
 				: alphaNodes;
 		if(column.getConditions() == null){
@@ -79,57 +79,104 @@ public class ObjectTypeNode implements Serializable, Node {
 		
 		String variableNameString=reteTempData.getVariables().get(this.objectType.getClassNameAllPath());
 		int lastIndexOfSingleCondition=figuareIndexOfAddMemory(column.getConditions(), reteTempData);
-		
+		Map<String, List<AlphaNode>> results=buildAlphaNetwork(column.getConditions(), 0, lastIndexOfSingleCondition, variableNameString);
+		for(AlphaNode headNode: results.get("head")){
+			addAlphaNodeToAlphaNodes(headNode);
+		}
 	}
 	public void buildself(Rule rule,Column column,BuildReteTempData buildReteTempData){
 		this.objectType=new ObjectType(column.getTypeAllpath());
 		this.setRuleName(rule.getName());
 		this.buildAlphaNode(column, buildReteTempData);
 	}
-	private void buildAlphaNetwork(List<Condition> conditions ,int start,int end,BuildReteTempData reteTempData){
+	private Map<String, List<AlphaNode>> buildAlphaNetwork(List<Condition> conditions ,int start,int end,String variableNameString){
+		Map<String, List<AlphaNode>> results=new HashMap<String, List<AlphaNode>>();
+		results.put("head", new ArrayList<AlphaNode>());
+		results.put("tail", new ArrayList<AlphaNode>());
 		List<AlphaNode> previousAlphaNodes = new ArrayList<AlphaNode>();//为了or关系
-		Node fatherNode=null;//为了or关系能够找到父节点进行连接
-		
-		for(int i=0;i<=lastIndexOfSingleCondition;i++){
-			Condition condition=column.getConditions().get(i);	
+		//List<Node> fathers=new ArrayList<Node>();//为了or关系能够找到父节点进行连接
+		List<AlphaNode> tailNodes=new ArrayList<AlphaNode>();
+		for(int i=start;i<=end;i++){
+			Condition condition=conditions.get(i);	
 			AlphaNode alphaNode = new AlphaNode(condition.getExpression(),
-					column.getTypeAllpath());
+					this.objectType.getClassNameAllPath());
 			alphaNode.buildself(ruleName, variableNameString, false);
-			if(i==0){
-				addAlphaNodeToAlphaNodes(alphaNode);
-				fatherNode=this;
-				if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
-					}//预测下一个是否为or是的话把father加上去}
-				previousAlphaNodes.add(alphaNode);
-			}else {
-				if (condition.getAndOr() == AndOr.AND) {
-					// 之前有父alphaNode
+			
+			boolean isTheFirst= i==0 || i==start ;
+			if( isTheFirst || condition.getAndOr() == AndOr.AND ){
+				if(isTheFirst){
+					results.get("head").add(alphaNode);
+				}
+				if(!isTheFirst && condition.getBracket()!=null && condition.getBracket().equals("left")){
+					int rightIndex=findNextRightBracketIndex(i, conditions);
+					Map<String, List<AlphaNode>> middleResults=buildAlphaNetwork(conditions, i, rightIndex, variableNameString);
+					for(AlphaNode previousAlphaNode:previousAlphaNodes){
+						for(AlphaNode headNodes:middleResults.get("head")){
+							previousAlphaNode.buildNextNodes(headNodes);
+						}
+					}
+					previousAlphaNodes.clear();
+					previousAlphaNodes.addAll(middleResults.get("tail"));
+					tailNodes.clear();
+					tailNodes.addAll(middleResults.get("tail"));
+					i=rightIndex;
+				}else{
 					for (AlphaNode previousAlphaNode:previousAlphaNodes) {
 						previousAlphaNode.buildNextNodes(alphaNode);
 					}
-					if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
-						}//预测下一个是否为or是的话把father加上去}
 					previousAlphaNodes.clear();
 					previousAlphaNodes.add(alphaNode);
-
-				} else if (condition.getAndOr() == AndOr.OR) {
-					if(fatherNode!=null){
-						if(fatherNode instanceof ObjectTypeNode){
-							addAlphaNodeToAlphaNodes(alphaNode);
-						}else if(fatherNode instanceof AlphaNode){
-							((AlphaNode) fatherNode).buildNextNodes(alphaNode);
-						}	
-						previousAlphaNodes.add(alphaNode);
-					}
-					
-					if (!alphaNodes.containsKey(alphaNode.getConditionValue())) {
-						alphaNodes
-								.put(alphaNode.getConditionValue(), alphaNode);
-					}
+					tailNodes.clear();
+					tailNodes.add(alphaNode);
+				}
+			}else if(condition.getAndOr() == AndOr.OR){
+				if(condition.getBracket()!=null && condition.getBracket().equals("left")){
+					int rightIndex=findNextRightBracketIndex(i, conditions);
+					Map<String, List<AlphaNode>> middleResults=buildAlphaNetwork(conditions, i, rightIndex, variableNameString);
+					results.get("head").addAll(middleResults.get("head"));
+					previousAlphaNodes.addAll(middleResults.get("tail"));
+					tailNodes.addAll(middleResults.get("tail"));
+				}else{
+					results.get("head").add(alphaNode);
+					previousAlphaNodes.add(alphaNode);
+					tailNodes.add(alphaNode);
 				}
 			}
-			
 		}
+		results.get("tail").addAll(tailNodes);
+		return results;
+//			if(i==start){
+//				addAlphaNodeToAlphaNodes(alphaNode);
+//				if(i+1<=end && conditions.get(i+1).getAndOr()==AndOr.OR){
+//					}//预测下一个是否为or是的话把father加上去}
+//				previousAlphaNodes.add(alphaNode);
+//			}else {
+//				if (condition.getAndOr() == AndOr.AND) {
+//					// 之前有父alphaNode
+//					for (AlphaNode previousAlphaNode:previousAlphaNodes) {
+//						previousAlphaNode.buildNextNodes(alphaNode);
+//					}
+//					if(i+1<=lastIndexOfSingleCondition && column.getConditions().get(i+1).getAndOr()==AndOr.OR){
+//						}//预测下一个是否为or是的话把father加上去}
+//					previousAlphaNodes.clear();
+//					previousAlphaNodes.add(alphaNode);
+//
+//				} else if (condition.getAndOr() == AndOr.OR) {
+//					if(fatherNode!=null){
+//						if(fatherNode instanceof ObjectTypeNode){
+//							addAlphaNodeToAlphaNodes(alphaNode);
+//						}else if(fatherNode instanceof AlphaNode){
+//							((AlphaNode) fatherNode).buildNextNodes(alphaNode);
+//						}	
+//						previousAlphaNodes.add(alphaNode);
+//					}
+//					
+//					if (!alphaNodes.containsKey(alphaNode.getConditionValue())) {
+//						alphaNodes
+//								.put(alphaNode.getConditionValue(), alphaNode);
+//					}
+//				}
+//			}
 	}
 	/**
 	 * 根据左括号找到右括号的index
@@ -175,8 +222,8 @@ public class ObjectTypeNode implements Serializable, Node {
 					alphaNode);
 		}else{
 			AlphaNode exsitedNode=alphaNodes.get(alphaNode.getConditionValue());
-			exsitedNode.setRuleName(this.ruleName);
-			exsitedNode.setVariable(alphaNode.getVariable());
+			exsitedNode.mergeFromAnoterAlphaNode(alphaNode);
+			
 		}
 	}
 	

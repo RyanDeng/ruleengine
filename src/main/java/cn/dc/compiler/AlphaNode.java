@@ -48,13 +48,33 @@ public class AlphaNode implements Serializable,Node{
 	public void setObjectTypeString(String objectTypeString) {
 		this.objectTypeString = objectTypeString;
 	}
+	
+	public HashMap<String, AlphaNode> getNextNodes() {
+		return nextNodes;
+	}
 	public void buildNextNodes(AlphaNode nextNode){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
 		if(!nextNodes.containsKey(nextNode.getConditionValue())){
 			nextNodes.put(nextNode.getConditionValue(), nextNode);
+		}else {
+			nextNodes.get(nextNode.getConditionValue()).setRuleName(nextNode.getRuleName());
+			nextNodes.get(nextNode.getConditionValue()).setVariable(nextNode.getVariable());
+			if(nextNode.getNextNodes()!=null){
+				for(AlphaNode alphaNode:nextNode.getNextNodes().values()){
+					if (alphaNode instanceof AlphaNode){
+						nextNodes.get(nextNode.getConditionValue()).buildNextNodes(alphaNode);
+					}
+				}
+			}
 		}
 	}
-	
+	public void mergeFromAnoterAlphaNode(AlphaNode alphaNode){
+		this.ruleName=alphaNode.getRuleName();
+		this.variable=alphaNode.getVariable();
+		for(AlphaNode nextNode: alphaNode.getNextNodes().values()){
+			this.buildNextNodes(nextNode);
+		}
+	}
 	public String getVariable() {
 		return variable;
 	}
@@ -80,6 +100,7 @@ public class AlphaNode implements Serializable,Node{
 			nextNodes.put("", node);
 			return node;
 		}else{
+			nextNodes.get("").setRuleName(ruleName);
 			return (AlphaMemoryNode)nextNodes.get("");
 		}
 		
