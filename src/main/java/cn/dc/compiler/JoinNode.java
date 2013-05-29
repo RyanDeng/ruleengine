@@ -17,7 +17,7 @@ public class JoinNode implements Serializable, Node {
 	private String expression;
 	private BetaMemory betaMemory;
 	private Node nextJoinOrRuleNode;
-	private Node leftInputNode;
+	private AlphaMemoryNode leftInputNode;
 	private Node rightInputNode;
 	private String ruleName;
 	private String leftVariable;
@@ -60,11 +60,11 @@ public class JoinNode implements Serializable, Node {
 		this.nextJoinOrRuleNode = nextJoinOrRuleNode;
 	}
 
-	public Node getLeftInputNode() {
+	public AlphaMemoryNode getLeftInputNode() {
 		return leftInputNode;
 	}
 
-	public void setLeftInputNode(Node leftInputNode) {
+	public void setLeftInputNode(AlphaMemoryNode leftInputNode) {
 		this.leftInputNode = leftInputNode;
 	}
 
@@ -93,6 +93,11 @@ public class JoinNode implements Serializable, Node {
 
 	public void setRightVariable(String rightVariable) {
 		this.rightVariable = rightVariable;
+	}
+	public void buildSelf(AlphaMemoryNode alphaMemoryNode,String leftVarString){
+		this.leftInputNode=alphaMemoryNode;
+		this.leftVariable=leftVarString;
+		this.ruleName=alphaMemoryNode.getRuleName();
 	}
 	public RuleNode fireEval(Node node){
 		//判断是否左右两个输入都是有数据的

@@ -65,7 +65,7 @@ public class ObjectTypeNode implements Serializable, Node {
 	public void setPkgName(String pkgName) {
 		this.pkgName = pkgName;
 	}
-	private void buildAlphaNode(Column column, BuildReteTempData reteTempData){
+	private List<AlphaNode> buildAlphaNode(Column column, BuildReteTempData reteTempData){
 		alphaNodes = alphaNodes == null ? new HashMap<String, AlphaNode>()
 				: alphaNodes;
 		if(column.getConditions() == null){
@@ -73,8 +73,13 @@ public class ObjectTypeNode implements Serializable, Node {
 			alphaNodeNull.buildself(ruleName,null,true);
 			if (!alphaNodes.containsKey("")) {
 				alphaNodes.put("", alphaNodeNull);
+			}else{
+				AlphaMemoryNode alphaMemoryNode=(AlphaMemoryNode) alphaNodes.get("").getNextNodes().get("");
+				alphaMemoryNode.buildSelf(ruleName, null);
 			}
-			return ;
+			List<AlphaNode> results=new ArrayList<AlphaNode>();
+			results.add(alphaNodes.get(""));
+			return results;
 		}
 		
 		String variableNameString=reteTempData.getVariables().get(this.objectType.getClassNameAllPath());
@@ -84,15 +89,35 @@ public class ObjectTypeNode implements Serializable, Node {
 			addAlphaNodeToAlphaNodes(headNode);
 		}
 		
-		AlphaMemoryNode alphaMemoryNode=new AlphaMemoryNode(this.ruleName);
+		AlphaMemoryNode alphaMemoryNode=new AlphaMemoryNode(this.ruleName,variableNameString);
 		for(AlphaNode tailNode:results.get("tail")){
 			tailNode.linkAlphaMemoryNode(alphaMemoryNode);
 		}
+		//连接
+		if(lastIndexOfSingleCondition!=column.getConditions().size()-1){
+			JoinNode joinNode=buildJoinNode(column.getConditions().get(lastIndexOfSingleCondition+1));
+			joinNode.buildSelf(alphaMemoryNode, variableNameString);
+			for(AlphaNode tailNode:results.get("tail")){
+				AlphaMemoryNode tailAlphaMemoryNode=(AlphaMemoryNode) tailNode.getNextNodes().get("");
+				tailAlphaMemoryNode.linkJoinNode(joinNode);
+			}
+		}
+		return results.get("tail");
+		
 	}
-	public void buildself(Rule rule,Column column,BuildReteTempData buildReteTempData){
+	public void mergeFromAnotherObjectTypeNode(ObjectTypeNode objectTypeNode){
+		this.setRuleName(ruleName);
+		//yaoxie 
+		
+	}
+	public List<AlphaNode> buildself(Rule rule,Column column,BuildReteTempData buildReteTempData){
 		this.objectType=new ObjectType(column.getTypeAllpath());
 		this.setRuleName(rule.getName());
-		this.buildAlphaNode(column, buildReteTempData);
+		return this.buildAlphaNode(column, buildReteTempData);
+	}
+	private JoinNode buildJoinNode(Condition condition){
+		JoinNode joinNode=new JoinNode(condition.getExpression());
+		return joinNode;
 	}
 	private Map<String, List<AlphaNode>> buildAlphaNetwork(List<Condition> conditions ,int start,int end,String variableNameString){
 		Map<String, List<AlphaNode>> results=new HashMap<String, List<AlphaNode>>();
@@ -117,8 +142,8 @@ public class ObjectTypeNode implements Serializable, Node {
 					int rightIndex=findNextRightBracketIndex(i, conditions);
 					Map<String, List<AlphaNode>> middleResults=buildAlphaNetwork(conditions, i, rightIndex, variableNameString);
 					for(AlphaNode previousAlphaNode:previousAlphaNodes){
-						for(AlphaNode headNodes:middleResults.get("head")){
-							previousAlphaNode.buildNextNodes(headNodes);
+						for(AlphaNode headNode:middleResults.get("head")){
+							previousAlphaNode.buildNextNodes(headNode);
 						}
 					}
 					previousAlphaNodes.clear();
@@ -127,13 +152,14 @@ public class ObjectTypeNode implements Serializable, Node {
 					tailNodes.addAll(middleResults.get("tail"));
 					i=rightIndex;
 				}else{
+					AlphaNode linkNode=null;
 					for (AlphaNode previousAlphaNode:previousAlphaNodes) {
-						previousAlphaNode.buildNextNodes(alphaNode);
+						linkNode=previousAlphaNode.buildNextNodes(alphaNode);
 					}
 					previousAlphaNodes.clear();
-					previousAlphaNodes.add(alphaNode);
+					previousAlphaNodes.add(linkNode);
 					tailNodes.clear();
-					tailNodes.add(alphaNode);
+					tailNodes.add(linkNode);
 				}
 			}else if(condition.getAndOr() == AndOr.OR){
 				if(condition.getBracket()!=null && condition.getBracket().equals("left")){

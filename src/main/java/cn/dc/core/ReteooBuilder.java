@@ -33,7 +33,7 @@ public class ReteooBuilder {
 	public void buildReteoo(RulePackage rulePackage) {
 		List<Rule> rules = rulePackage.getRules();
 		for (Rule rule : rules) {
-			createObjectType(rule, getBuildReteTempData(rule));
+			buildObjectTypeNode(rule, getBuildReteTempData(rule));
  //			System.out.println("test");
 		}
 	}
@@ -72,6 +72,10 @@ public class ReteooBuilder {
 					.getClassNameAllPath())) {
 				objectTypeNodes.put(objectTypeNode.getObjectType()
 						.getClassNameAllPath(), objectTypeNode);
+			}else{
+				ObjectTypeNode existedObjectTypeNode=objectTypeNodes.get(objectTypeNode.getObjectType()
+					.getClassNameAllPath());
+				//要写
 			}
 		}
 	}

@@ -52,10 +52,11 @@ public class AlphaNode implements Serializable,Node{
 	public HashMap<String, AlphaNode> getNextNodes() {
 		return nextNodes;
 	}
-	public void buildNextNodes(AlphaNode nextNode){
+	public AlphaNode buildNextNodes(AlphaNode nextNode){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
 		if(!nextNodes.containsKey(nextNode.getConditionValue())){
 			nextNodes.put(nextNode.getConditionValue(), nextNode);
+			return nextNode;
 		}else {
 			nextNodes.get(nextNode.getConditionValue()).setRuleName(nextNode.getRuleName());
 			nextNodes.get(nextNode.getConditionValue()).setVariable(nextNode.getVariable());
@@ -66,6 +67,7 @@ public class AlphaNode implements Serializable,Node{
 					}
 				}
 			}
+			return nextNodes.get(nextNode.getConditionValue());
 		}
 	}
 	public void mergeFromAnoterAlphaNode(AlphaNode alphaNode){
@@ -90,8 +92,10 @@ public class AlphaNode implements Serializable,Node{
 	}
 	public void linkAlphaMemoryNode(AlphaMemoryNode alphaMemoryNode){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
-		if(!nextNodes.containsKey(alphaMemoryNode.getRuleName())){
-			nextNodes.put(alphaMemoryNode.getRuleName(), alphaMemoryNode);
+		if(!nextNodes.containsKey("")){
+			nextNodes.put("", alphaMemoryNode);
+		}else{
+			nextNodes.get("").setRuleName(alphaMemoryNode.getRuleName());
 		}
 	}
 	/**
@@ -100,13 +104,13 @@ public class AlphaNode implements Serializable,Node{
 	private AlphaMemoryNode buildNextNodes(String ruleName){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
 		AlphaMemoryNode node=null;
-		if(!nextNodes.containsKey(ruleName)){
-			node=new AlphaMemoryNode(ruleName);
-			nextNodes.put(ruleName, node);
+		if(!nextNodes.containsKey("")){
+			node=new AlphaMemoryNode(ruleName,null);
+			nextNodes.put("", node);
 			return node;
 		}else{
-			nextNodes.get(ruleName).setRuleName(ruleName);
-			return (AlphaMemoryNode)nextNodes.get(ruleName);
+			nextNodes.get("").setRuleName(ruleName);
+			return (AlphaMemoryNode)nextNodes.get("");
 		}
 		
 	}

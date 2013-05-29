@@ -19,14 +19,19 @@ public class AlphaMemoryNode extends AlphaNode implements Node{
 	private List<JoinNode> joinNodes;
 	
 	private String ruleName;
+	private String varString;
 	
 //	private List<AlphaNode> previousNodes;
-	public AlphaMemoryNode(String ruleName){
+	public AlphaMemoryNode(String ruleName,String varString){
 		this.joinNodes=new ArrayList<JoinNode>();
 		this.ruleName=ruleName;
+		this.varString=varString;
 		//this.previousNodes=new ArrayList<AlphaNode>();
 	}
-	
+	public void buildSelf(String ruleName,String varString){
+		this.ruleName=ruleName;
+		this.varString=varString;
+	}
 	public Set<Object> getReadyObjects() {
 		return readyObjects;
 	}
@@ -39,7 +44,26 @@ public class AlphaMemoryNode extends AlphaNode implements Node{
 	public void setJoinNodes(List<JoinNode> joinNodes) {
 		this.joinNodes = joinNodes;
 	}
+	
+	public String getRuleName() {
+		return ruleName;
+	}
 
+	public void setRuleName(String ruleName) {
+		this.ruleName = ruleName;
+	}
+
+	public String getVarString() {
+		return varString;
+	}
+
+	public void setVarString(String varString) {
+		this.varString = varString;
+	}
+
+	public void linkJoinNode(JoinNode joinNode){
+		joinNodes.add(joinNode);
+	}
 //	public AlphaNode getPreviousNode() {
 //		return previousNode;
 //	}
