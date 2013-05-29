@@ -9,10 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.mvel2.MVEL;
-import org.mvel2.templates.res.EvalNode;
-import org.mvel2.util.ThisLiteral;
-
 import cn.dc.core.Column;
 import cn.dc.core.Condition;
 import cn.dc.core.Rule;
@@ -108,7 +104,21 @@ public class ObjectTypeNode implements Serializable, Node {
 	public void mergeFromAnotherObjectTypeNode(ObjectTypeNode objectTypeNode){
 		this.setRuleName(ruleName);
 		//yaoxie 
-		
+		for(Map.Entry<String,AlphaNode> entry : objectTypeNode.getAlphaNodes().entrySet()){
+			if (!alphaNodes.containsKey(entry.getKey())) {
+				alphaNodes.put(entry.getKey(), entry.getValue());
+			}else{
+//				if(entry.getValue() instanceof AlphaMemoryNode){
+//					if (!alphaNodes.containsKey("")) {
+//						alphaNodes.put("", entry.getValue());
+//					}else{
+//						((AlphaMemoryNode)alphaNodes.get("")).getJoinNodes().addAll(((AlphaMemoryNode)entry.getValue()).getJoinNodes());
+//					}
+//				}
+				alphaNodes.get(entry.getKey()).mergeFromAnoterAlphaNode(entry.getValue());
+				
+			}
+		}
 	}
 	public List<AlphaNode> buildself(Rule rule,Column column,BuildReteTempData buildReteTempData){
 		this.objectType=new ObjectType(column.getTypeAllpath());

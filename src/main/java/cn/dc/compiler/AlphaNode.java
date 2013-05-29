@@ -54,6 +54,15 @@ public class AlphaNode implements Serializable,Node{
 	}
 	public AlphaNode buildNextNodes(AlphaNode nextNode){
 		nextNodes=nextNodes==null?new HashMap<String, AlphaNode>():nextNodes;
+		if(nextNode instanceof AlphaMemoryNode){
+			if(!nextNodes.containsKey("")){
+				nextNodes.put("", nextNode);
+			}else{
+				((AlphaMemoryNode)nextNodes.get("")).getJoinNodes().addAll(((AlphaMemoryNode) nextNode).getJoinNodes());
+			}
+			return null;
+		}
+		
 		if(!nextNodes.containsKey(nextNode.getConditionValue())){
 			nextNodes.put(nextNode.getConditionValue(), nextNode);
 			return nextNode;

@@ -76,7 +76,10 @@ public class ReteooBuilder {
 				ObjectTypeNode existedObjectTypeNode=objectTypeNodes.get(objectTypeNode.getObjectType()
 					.getClassNameAllPath());
 				//要写
+				existedObjectTypeNode.mergeFromAnotherObjectTypeNode(objectTypeNode);
 			}
+			
+			
 		}
 	}
 	/**
