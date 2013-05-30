@@ -64,7 +64,9 @@ public class ObjectTypeNode implements Serializable, Node {
 	private List<AlphaNode> buildAlphaNode(Column column, BuildReteTempData reteTempData){
 		alphaNodes = alphaNodes == null ? new HashMap<String, AlphaNode>()
 				: alphaNodes;
-		if(column.getConditions() == null){
+		String variableNameString=reteTempData.getVariables().get(this.objectType.getClassNameAllPath());
+		int lastIndexOfSingleCondition=figuareIndexOfAddMemory(column.getConditions(), reteTempData);
+		if(column.getConditions()==null || lastIndexOfSingleCondition==-1){
 			AlphaNode alphaNodeNull=new AlphaNode("", column.getTypeAllpath());
 			alphaNodeNull.buildself(ruleName,null,true);
 			if (!alphaNodes.containsKey("")) {
@@ -78,8 +80,6 @@ public class ObjectTypeNode implements Serializable, Node {
 			return results;
 		}
 		
-		String variableNameString=reteTempData.getVariables().get(this.objectType.getClassNameAllPath());
-		int lastIndexOfSingleCondition=figuareIndexOfAddMemory(column.getConditions(), reteTempData);
 		Map<String, List<AlphaNode>> results=buildAlphaNetwork(column.getConditions(), 0, lastIndexOfSingleCondition, variableNameString);
 		for(AlphaNode headNode: results.get("head")){
 			addAlphaNodeToAlphaNodes(headNode);
@@ -92,7 +92,7 @@ public class ObjectTypeNode implements Serializable, Node {
 		//连接
 		if(lastIndexOfSingleCondition!=column.getConditions().size()-1){
 			JoinNode joinNode=buildJoinNode(column.getConditions().get(lastIndexOfSingleCondition+1));
-			joinNode.buildSelf(alphaMemoryNode, variableNameString);
+			joinNode.buildSelf(alphaMemoryNode, variableNameString,reteTempData);
 			for(AlphaNode tailNode:results.get("tail")){
 				AlphaMemoryNode tailAlphaMemoryNode=(AlphaMemoryNode) tailNode.getNextNodes().get("");
 				tailAlphaMemoryNode.linkJoinNode(joinNode);
@@ -167,9 +167,15 @@ public class ObjectTypeNode implements Serializable, Node {
 						linkNode=previousAlphaNode.buildNextNodes(alphaNode);
 					}
 					previousAlphaNodes.clear();
-					previousAlphaNodes.add(linkNode);
 					tailNodes.clear();
-					tailNodes.add(linkNode);
+					if(linkNode==null){
+						previousAlphaNodes.add(alphaNode);
+						tailNodes.add(alphaNode);
+					}else{
+						previousAlphaNodes.add(linkNode);
+						tailNodes.add(linkNode);
+					}
+					
 				}
 			}else if(condition.getAndOr() == AndOr.OR){
 				if(condition.getBracket()!=null && condition.getBracket().equals("left")){

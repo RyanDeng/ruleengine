@@ -95,6 +95,7 @@ public class AlphaNode implements Serializable,Node{
 	
 	public void buildself(String ruleName,String variableName, boolean isBuildMemory){
 		this.setRuleName(ruleName);
+		this.variable=variableName;
 		if(isBuildMemory){
 			AlphaMemoryNode alphaMemoryNode=buildNextNodes(ruleName);
 		}

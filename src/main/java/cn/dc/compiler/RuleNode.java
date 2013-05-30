@@ -11,8 +11,9 @@ public class RuleNode extends JoinNode implements Node {
 	private String thenStatements;
 	private Node previousNode;
 	private int salience;
+	private boolean noLoop;
 	
-	private List<AlphaMemoryNode> alphaMemoryNodes;
+	//private List<AlphaMemoryNode> alphaMemoryNodes;
 	
 	public RuleNode(Rule rule){
 		this.ruleName=rule.getName();
@@ -24,10 +25,10 @@ public class RuleNode extends JoinNode implements Node {
 		this.previousNode=previousNode;
 		
 	}
-	public RuleNode(Rule rule,List<AlphaMemoryNode> alphaMemoryNodes){
-		this(rule);
-		this.alphaMemoryNodes=alphaMemoryNodes;
-	}
+//	public RuleNode(Rule rule,List<AlphaMemoryNode> alphaMemoryNodes){
+//		this(rule);
+//		this.alphaMemoryNodes=alphaMemoryNodes;
+//	}
 	public String getRuleName() {
 		return ruleName;
 	}
@@ -49,10 +50,14 @@ public class RuleNode extends JoinNode implements Node {
 	public int getSalience() {
 		return salience;
 	}
-	public List<AlphaMemoryNode> getAlphaMemoryNodes() {
-		return alphaMemoryNodes;
-	}
+//	public List<AlphaMemoryNode> getAlphaMemoryNodes() {
+//		return alphaMemoryNodes;
+//	}
 	public void dispose(){
 		
 	}
+	public boolean isNoLoop() {
+		return noLoop;
+	}
+	
 }

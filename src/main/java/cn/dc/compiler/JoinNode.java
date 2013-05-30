@@ -2,11 +2,13 @@ package cn.dc.compiler;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mvel2.MVEL;
 
 import cn.dc.core.Rule;
+import cn.dc.runtime.BuildReteTempData;
 
 public class JoinNode implements Serializable, Node {
 
@@ -94,10 +96,16 @@ public class JoinNode implements Serializable, Node {
 	public void setRightVariable(String rightVariable) {
 		this.rightVariable = rightVariable;
 	}
-	public void buildSelf(AlphaMemoryNode alphaMemoryNode,String leftVarString){
+	public void buildSelf(AlphaMemoryNode alphaMemoryNode,String leftVarString,BuildReteTempData reteTempData){
 		this.leftInputNode=alphaMemoryNode;
 		this.leftVariable=leftVarString;
 		this.ruleName=alphaMemoryNode.getRuleName();
+		List<String> varLists=reteTempData.getVariableList(expression, null);
+		if(varLists.get(0).equals(leftVarString)){
+			this.rightVariable=varLists.get(1);
+		}else{
+			this.rightVariable=varLists.get(0);
+		}
 	}
 	public RuleNode fireEval(Node node){
 		//判断是否左右两个输入都是有数据的
