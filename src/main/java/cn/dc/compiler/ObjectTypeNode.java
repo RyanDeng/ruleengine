@@ -77,28 +77,41 @@ public class ObjectTypeNode implements Serializable, Node {
 			}
 			List<AlphaNode> results=new ArrayList<AlphaNode>();
 			results.add(alphaNodes.get(""));
+			if(lastIndexOfSingleCondition!=-1)
+				return results;
+		}
+		if(lastIndexOfSingleCondition!=-1){//如果非单条的joinode
+			Map<String, List<AlphaNode>> results=buildAlphaNetwork(column.getConditions(), 0, lastIndexOfSingleCondition, variableNameString);
+		
+			for(AlphaNode headNode: results.get("head")){
+				addAlphaNodeToAlphaNodes(headNode);
+			}
+		
+			AlphaMemoryNode alphaMemoryNode=new AlphaMemoryNode(this.ruleName,variableNameString);
+			for(AlphaNode tailNode:results.get("tail")){
+				tailNode.linkAlphaMemoryNode(alphaMemoryNode);
+			}
+		
+			//连接
+			if(lastIndexOfSingleCondition!=column.getConditions().size()-1){
+				JoinNode joinNode=buildJoinNode(column.getConditions().get(lastIndexOfSingleCondition+1));
+				joinNode.buildSelf(alphaMemoryNode, variableNameString,reteTempData);
+				for(AlphaNode tailNode:results.get("tail")){
+					AlphaMemoryNode tailAlphaMemoryNode=(AlphaMemoryNode) tailNode.getNextNodes().get("");
+					tailAlphaMemoryNode.linkJoinNode(joinNode);
+				}
+			}
+			return results.get("tail");
+		}else{
+			AlphaMemoryNode alphaLinkMemoryNode=(AlphaMemoryNode) alphaNodes.get("").getNextNodes().get("");
+			JoinNode joinNode=buildJoinNode(column.getConditions().get(lastIndexOfSingleCondition+1));
+			joinNode.buildSelf(alphaLinkMemoryNode, variableNameString,reteTempData);
+			alphaLinkMemoryNode.linkJoinNode(joinNode);
+			List<AlphaNode> results=new ArrayList<AlphaNode>();
+			results.add(alphaNodes.get(""));
 			return results;
 		}
 		
-		Map<String, List<AlphaNode>> results=buildAlphaNetwork(column.getConditions(), 0, lastIndexOfSingleCondition, variableNameString);
-		for(AlphaNode headNode: results.get("head")){
-			addAlphaNodeToAlphaNodes(headNode);
-		}
-		
-		AlphaMemoryNode alphaMemoryNode=new AlphaMemoryNode(this.ruleName,variableNameString);
-		for(AlphaNode tailNode:results.get("tail")){
-			tailNode.linkAlphaMemoryNode(alphaMemoryNode);
-		}
-		//连接
-		if(lastIndexOfSingleCondition!=column.getConditions().size()-1){
-			JoinNode joinNode=buildJoinNode(column.getConditions().get(lastIndexOfSingleCondition+1));
-			joinNode.buildSelf(alphaMemoryNode, variableNameString,reteTempData);
-			for(AlphaNode tailNode:results.get("tail")){
-				AlphaMemoryNode tailAlphaMemoryNode=(AlphaMemoryNode) tailNode.getNextNodes().get("");
-				tailAlphaMemoryNode.linkJoinNode(joinNode);
-			}
-		}
-		return results.get("tail");
 		
 	}
 	public void mergeFromAnotherObjectTypeNode(ObjectTypeNode objectTypeNode){
