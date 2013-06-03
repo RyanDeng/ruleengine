@@ -36,10 +36,18 @@ public class XMLParser {
 	}
 	private static Rule parseForRule(Element ruleElm){
 		Rule rule=new Rule(ruleElm.attributeValue("name"));
-		Element rule_attrtibute=ruleElm.element("rule-attribute");
-		if(rule_attrtibute!=null && rule_attrtibute.attributeValue("name").equals("salience")){
-			rule.setSalience(Integer.parseInt(rule_attrtibute.attributeValue("value")));
+		List<Element> rule_attrtibutes=ruleElm.elements("rule-attribute");
+//		if(rule_attrtibute!=null && rule_attrtibute.attributeValue("name").equals("salience")){
+//			rule.setSalience(Integer.parseInt(rule_attrtibute.attributeValue("value")));
+//		}
+		for(Element rule_attribute:rule_attrtibutes){
+			if(rule_attribute.attributeValue("name").equals("salience")){
+				rule.setSalience(Integer.parseInt(rule_attribute.attributeValue("value")));
+			}else if(rule_attribute.attributeValue("name").equals("no-loop")){
+				rule.setNoLoop(Boolean.parseBoolean(rule_attribute.attributeValue("value")));
+			}
 		}
+		
 		
 		rule.setColumns(new ArrayList<Column>());
 		Element whenElement=ruleElm.element("when");
@@ -98,7 +106,7 @@ public class XMLParser {
 //		Document document=getDocument(path);
 //	}
 	
-//	public static void main(String[] args){
-//		XMLParser.parseForPackage("/home/ryan/workspace/ruleengine/src/main/java/cn/dc/rules/account.xml");
-//	}
+	public static void main(String[] args){
+		XMLParser.parseForPackage("/home/ryan/workspace/ruleengine/src/main/java/cn/dc/rules/account.xml");
+	}
 }

@@ -4,6 +4,7 @@
 <import name="cn.dc.use.Account"/>
 <rule name="account">
 	<rule-attribute name="salience" value="10" />
+	<rule-attribute name="no-loop" value="true" />
 	<when>
 		<column type="UserAccount" name="userAccount">
 			<condition>  userAccount.userId &lt;= 2 </condition>

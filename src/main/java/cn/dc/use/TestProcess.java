@@ -17,22 +17,22 @@ public class TestProcess {
 		
 		RuleBase ruleBase=new ReteooRuleBase();
 		ruleBase.addPackages(pBuilder.getPackages());
-//		WorkingMemory workingMemory=ruleBase.newWorkingMemory();
-//		
-//		UserAccount userAccount=new UserAccount();
-//		userAccount.setUserId("2");
-//		Account account=new Account();
-//		account.setUserId("2");
-//		account.setBalance(20.0);
-//		Account account1=new Account();
-//		account1.setUserId("2");
-//		account1.setBalance(42.0);
-//		
-//		workingMemory.insert(userAccount);
-//		workingMemory.insert(account);
-//		workingMemory.insert(account1);
-//		
-//		workingMemory.fireAllRules();
-//		workingMemory.dispose();
+		WorkingMemory workingMemory=ruleBase.newWorkingMemory();
+		
+		UserAccount userAccount=new UserAccount();
+		userAccount.setUserId("2");
+		Account account=new Account();
+		account.setUserId("2");
+		account.setBalance(20.0);
+		Account account1=new Account();
+		account1.setUserId("2");
+		account1.setBalance(42.0);
+		
+		workingMemory.insert(userAccount);
+		workingMemory.insert(account);
+		workingMemory.insert(account1);
+		
+		workingMemory.fireAllRules();
+		workingMemory.dispose();
 	}
 }

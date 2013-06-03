@@ -27,7 +27,7 @@ public class Rule implements Serializable{
     /** Salience value. */
     private int salience;
     
-
+    private boolean noLoop;
     
     private List<Column> columns;
     
@@ -65,6 +65,7 @@ public class Rule implements Serializable{
         this.containerPackage=pkg;
         this.enabled = true;
         this.salience = SalienceInteger.DEFAULT_SALIENCE;
+        this.noLoop=false;
         this.containerPackage=pkg;
     }
 
@@ -160,6 +161,16 @@ public class Rule implements Serializable{
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+
+	public boolean isNoLoop() {
+		return noLoop;
+	}
+
+
+	public void setNoLoop(boolean noLoop) {
+		this.noLoop = noLoop;
 	}
     
 }

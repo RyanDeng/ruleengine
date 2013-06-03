@@ -88,23 +88,24 @@ public class WorkingMemory {
 		for (AlphaMemoryNode alphaMemoryNode : alphaMemoryNodes) {
 			if(nodeExistedInTraversedNode(alphaMemoryNode)) break;
 			
-			if (alphaMemoryNode.getJoinNode() != null) {
-				if (alphaMemoryNode.getJoinNode() instanceof JoinNode) {
-					RuleNode ruleNode = alphaMemoryNode.getJoinNode().fireEval(
-							alphaMemoryNode);		
-					if (ruleNode != null) {
-						//////////////////把当前的另一边输入加入已traverse队列中
-						AlphaMemoryNode otherSideNode = alphaMemoryNode
-								.getJoinNode().getOtherInputNode(
-										alphaMemoryNode);
-						if (otherSideNode != null) {
-							traversedAlphaMemoryNodes.add(otherSideNode);
+			if (alphaMemoryNode.getJoinNodes().size()!=0) {
+				for(JoinNode joinNode:alphaMemoryNode.getJoinNodes()){
+					if (joinNode instanceof JoinNode) {
+						RuleNode ruleNode = joinNode.fireEval(
+								alphaMemoryNode);		
+						if (ruleNode != null) {
+							//////////////////把当前的另一边输入加入已traverse队列中
+							AlphaMemoryNode otherSideNode = joinNode.getOtherInputNode(
+											alphaMemoryNode);
+							if (otherSideNode != null) {
+								traversedAlphaMemoryNodes.add(otherSideNode);
+							}
+							///////////
+							ruleQueue.offer(ruleNode);
 						}
-						///////////
-						ruleQueue.offer(ruleNode);
+					}else if(joinNode instanceof RuleNode){
+						ruleQueue.offer((RuleNode)joinNode);
 					}
-				}else if(alphaMemoryNode.getJoinNode() instanceof RuleNode){
-					ruleQueue.offer((RuleNode)alphaMemoryNode.getJoinNode());
 				}
 			}
 		}
