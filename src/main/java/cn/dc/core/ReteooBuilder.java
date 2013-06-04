@@ -91,6 +91,7 @@ public class ReteooBuilder {
 	private void linkRuleNode(Node lastNode,Rule rule){
 		RuleNode ruleNode=new RuleNode(rule, lastNode);
 		if(lastNode instanceof AlphaMemoryNode){
+			ruleNode.setVarString(((AlphaMemoryNode) lastNode).getVarString());
 			((AlphaMemoryNode) lastNode).getJoinNodes().add(ruleNode);
 		}else if(lastNode instanceof JoinNode){
 			((JoinNode) lastNode).setNextJoinOrRuleNode(ruleNode);

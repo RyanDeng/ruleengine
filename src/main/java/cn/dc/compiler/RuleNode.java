@@ -12,6 +12,7 @@ public class RuleNode extends JoinNode implements Node {
 	private Node previousNode;
 	private int salience;
 	private boolean noLoop;
+	private String varString;//为了前面只有单个alphamemorynode存储变量名
 	
 	//private List<AlphaMemoryNode> alphaMemoryNodes;
 	
@@ -58,6 +59,12 @@ public class RuleNode extends JoinNode implements Node {
 	}
 	public boolean isNoLoop() {
 		return noLoop;
+	}
+	public String getVarString() {
+		return varString;
+	}
+	public void setVarString(String varString) {
+		this.varString = varString;
 	}
 	
 }

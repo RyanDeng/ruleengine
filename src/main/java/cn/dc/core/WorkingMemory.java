@@ -1,9 +1,11 @@
 package cn.dc.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 
@@ -16,7 +18,7 @@ public class WorkingMemory {
 
 	private RuleBase ruleBase;
 	private List<Object> memoryList;
-	private List<AlphaMemoryNode> alphaMemoryNodes;
+	private Set<AlphaMemoryNode> alphaMemoryNodes;
 	private List<AlphaMemoryNode> traversedAlphaMemoryNodes;
 	private Queue<RuleNode> ruleQueue;
 	private Agenda agenda;
@@ -24,7 +26,7 @@ public class WorkingMemory {
 	public WorkingMemory(RuleBase ruleBase) {
 		this.ruleBase = ruleBase;
 		memoryList = new ArrayList<Object>();
-		alphaMemoryNodes = new ArrayList<AlphaMemoryNode>();
+		alphaMemoryNodes = new HashSet<AlphaMemoryNode>();
 		traversedAlphaMemoryNodes = new ArrayList<AlphaMemoryNode>();
 		ruleQueue=new LinkedList<RuleNode>();
 		agenda=new Agenda();
@@ -86,11 +88,13 @@ public class WorkingMemory {
 	}
 	private void getRuleQueue(){
 		for (AlphaMemoryNode alphaMemoryNode : alphaMemoryNodes) {
-			if(nodeExistedInTraversedNode(alphaMemoryNode)) break;
+			if(nodeExistedInTraversedNode(alphaMemoryNode)) break;//如果存在则说明左或右节点已进入运算过
 			
 			if (alphaMemoryNode.getJoinNodes().size()!=0) {
 				for(JoinNode joinNode:alphaMemoryNode.getJoinNodes()){
-					if (joinNode instanceof JoinNode) {
+					if(joinNode instanceof RuleNode){
+						ruleQueue.offer((RuleNode)joinNode);
+					}else if (joinNode instanceof JoinNode) {
 						RuleNode ruleNode = joinNode.fireEval(
 								alphaMemoryNode);		
 						if (ruleNode != null) {
@@ -103,8 +107,6 @@ public class WorkingMemory {
 							///////////
 							ruleQueue.offer(ruleNode);
 						}
-					}else if(joinNode instanceof RuleNode){
-						ruleQueue.offer((RuleNode)joinNode);
 					}
 				}
 			}

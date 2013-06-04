@@ -21,6 +21,7 @@ public class TestProcess {
 		
 		UserAccount userAccount=new UserAccount();
 		userAccount.setUserId("2");
+		userAccount.setBalance(50.0);
 		Account account=new Account();
 		account.setUserId("2");
 		account.setBalance(20.0);

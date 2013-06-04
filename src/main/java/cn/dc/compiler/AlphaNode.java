@@ -177,7 +177,7 @@ public class AlphaNode implements Serializable,Node{
 				((AlphaMemoryNode) alphaNode).getReadyObjects().add(obj);
 			}else{
 				if(alphaNode.eval(obj)){
-					alphaNode.insert(obj);
+					alphaMemoryNodes.addAll(alphaNode.insert(obj));
 				}
 			}
 		}

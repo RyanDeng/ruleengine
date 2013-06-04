@@ -1,10 +1,12 @@
 package cn.dc.agenda;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import cn.dc.compiler.AlphaMemoryNode;
 import cn.dc.compiler.JoinNode;
 import cn.dc.compiler.RuleNode;
 
@@ -22,9 +24,22 @@ public class Activation {
 		this.thenStatements=node.getThenStatements();
 		this.salience=node.getSalience();
 		readyObjects=new ArrayList<Map<String,Object>>();
-		JoinNode previousNode=(JoinNode) node.getPreviousNode();
-		if(previousNode!=null){
-			readyObjects.addAll(previousNode.getBetaMemory().getReadyObjects());
+		if(node.getPreviousNode() instanceof JoinNode){
+			JoinNode previousNode=(JoinNode) node.getPreviousNode();
+			if(previousNode!=null){
+				readyObjects.addAll(previousNode.getBetaMemory().getReadyObjects());
+			}
+		}else if(node.getPreviousNode() instanceof AlphaMemoryNode){
+			AlphaMemoryNode previousNode=(AlphaMemoryNode) node.getPreviousNode();
+			if(previousNode!=null){
+				List<Map<String, Object>> maps=new ArrayList<Map<String,Object>>();
+				for(Object obj:previousNode.getReadyObjects()){
+					Map<String, Object> map=new HashMap<String, Object>();
+					map.put(node.getVarString(), obj);
+					maps.add(map);
+				}
+				readyObjects.addAll(maps);
+			}
 		}
 	}
 	public String getRuleName() {
