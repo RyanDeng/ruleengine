@@ -39,6 +39,7 @@ public class Agenda {
 		
 	}
 	private void fire(Activation activation){
+		System.out.println("====执行"+activation.getRuleName()+"====");
 		Serializable compiledSerializable=MVEL.compileExpression(activation.getThenStatements());
 		for(Map<String, Object> map:activation.getReadyObjects()){
 			MVEL.executeExpression(compiledSerializable,map);
