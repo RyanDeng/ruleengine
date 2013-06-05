@@ -2,12 +2,8 @@ package cn.dc.parser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.text.DefaultStyledDocument.ElementSpec;
-
-import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -26,7 +22,7 @@ public class XMLParser {
 		Document document=reader.read(new File(path));
 		return document;
 	}
-	private static List<String> parseForImports(Element rootElm){
+	private static  List<String> parseForImports(Element rootElm){
 		List<String> importPkgs=new ArrayList<String>();
 		List<Element> imports=rootElm.elements("import");
 		for(Element importElement :imports){
@@ -34,7 +30,7 @@ public class XMLParser {
 		}
 		return importPkgs;
 	}
-	private static Rule parseForRule(Element ruleElm){
+	private static  Rule parseForRule(Element ruleElm){
 		Rule rule=new Rule(ruleElm.attributeValue("name"));
 		List<Element> rule_attrtibutes=ruleElm.elements("rule-attribute");
 //		if(rule_attrtibute!=null && rule_attrtibute.attributeValue("name").equals("salience")){
@@ -60,7 +56,7 @@ public class XMLParser {
 		rule.setThen(thenElement.getText());
 		return rule;
 	}
-	private static Column parseForColumn(Element columnElm){
+	private static  Column parseForColumn(Element columnElm){
 		Column column=new Column(columnElm.attributeValue("type").replaceAll("\\s", ""), columnElm.attributeValue("name").replaceAll("\\s", ""));
 		column.setConditions(new ArrayList<Condition>());
 		List<Element> conditions=columnElm.elements("condition");
@@ -69,7 +65,7 @@ public class XMLParser {
 		}
 		return column;
 	}
-	private static Condition parseForCondition(Element conditionElm){
+	private static  Condition parseForCondition(Element conditionElm){
 		Condition condition=new Condition(conditionElm.getText().replaceAll("\\s", ""));
 		if(conditionElm.attribute("andOr")!=null){
 			condition.setAndOr(conditionElm.attributeValue("andOr").replaceAll("\\s", ""));
@@ -77,7 +73,7 @@ public class XMLParser {
 		condition.setBracket(conditionElm.attributeValue("bracket"));
 		return condition;
 	}
-	public static RulePackage parseForPackage(String path){
+	public static  RulePackage parseForPackage(String path){
 		try {
 			Document document=XMLParser.getDocument(path);
 			Element rootElm = document.getRootElement();
@@ -102,11 +98,11 @@ public class XMLParser {
 		
 		
 	}
-//	public static Rule parseForRules(String path) {
+//	public   Rule parseForRules(String path) {
 //		Document document=getDocument(path);
 //	}
 	
-	public static void main(String[] args){
-		XMLParser.parseForPackage("/home/ryan/workspace/ruleengine/src/main/java/cn/dc/rules/account.xml");
-	}
+//	public  static void main(String[] args){
+//		XMLParser.parseForPackage("/home/ryan/workspace/ruleengine/src/main/java/cn/dc/rules/account.xml");
+//	}
 }

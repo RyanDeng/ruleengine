@@ -33,13 +33,19 @@ public class Agenda {
 			readyQueue.add(activation);
 		}
 		Collections.sort(readyQueue,new ConflictResolver());
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		for(Activation activation:readyQueue){
 			fire(activation);
 		}
 		
 	}
 	private void fire(Activation activation){
-		System.out.println("====执行"+activation.getRuleName()+"====");
+		System.out.println("====执行Rule"+activation.getRuleName()+"====");
 		Serializable compiledSerializable=MVEL.compileExpression(activation.getThenStatements());
 		for(Map<String, Object> map:activation.getReadyObjects()){
 			MVEL.executeExpression(compiledSerializable,map);

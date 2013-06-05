@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package name="cn.sse.score">
+<import name="cn.sse.demo.bean.Student"/>
+<import name="cn.sse.demo.bean.Course"/>
+
+<rule name="奖励分数">
+	<rule-attribute name="salience" value="10" />
+	<when>
+		<column type="Student" name="student">
+			<condition>student.award>5</condition>
+		</column>
+		<column type="Course" name="course">
+			<condition> course.name=="math"</condition>
+			<condition>course.studentId==student.id</condition>
+		</column>
+	</when>
+	<then>
+		course.setScore(course.getScore()+5);
+		System.out.println("-"+student.getName()+"的"+course.getName()+"更改成"+course.getScore());
+	</then>
+</rule>
+
+<rule name="修改等第">
+	<rule-attribute name="salience" value="8" />
+	<when>
+		<column type="Student" name="student">
+			<condition>student.name=="李海"</condition>
+		</column>
+		<column type="Course" name="course">
+			<condition> course.score >= 80</condition>
+			<condition andOr="AND"> course.score &lt;90 </condition>
+			<condition>course.studentId==student.id</condition>
+		</column>
+	</when>
+	<then>
+		course.setLevel("良");
+		System.out.println("-"+student.getName()+"的"+course.getName()+"等第是"+course.getLevel());
+	</then>
+</rule>
+</package>

@@ -35,7 +35,7 @@ public class ReteooBuilder {
 		List<Rule> rules = rulePackage.getRules();
 		for (Rule rule : rules) {
 			buildObjectTypeNode(rule, getBuildReteTempData(rule));
- 			System.out.println("test");
+//			System.out.println("===debug===");
 		}
 	}
 

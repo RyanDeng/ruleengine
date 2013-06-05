@@ -1,4 +1,4 @@
-package cn.dc.use;
+package cn.sse.demo.bean;
 
 public class Account {
 	private String userId;

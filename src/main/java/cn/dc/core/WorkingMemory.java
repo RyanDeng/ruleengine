@@ -47,6 +47,7 @@ public class WorkingMemory {
 	}
 
 	public int fireAllRules() {
+		System.out.println("===开始执行===");
 		insertObjects();
 		getRuleQueue();
 		
@@ -62,6 +63,7 @@ public class WorkingMemory {
 		ruleBase.getEntryPoint().dispose();
 
 		agenda.dispose();
+		System.out.println("====执行结束====");
 	}
 
 	/**
