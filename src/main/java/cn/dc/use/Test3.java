@@ -14,7 +14,7 @@ public class Test3 {
 		MyRuleEngine demoRuleEngine = new MyRuleEngineImpl();
 		demoRuleEngine.initEngine();
 		
-		UserAccount userAccount=new UserAccount();
+		User userAccount=new User();
 		userAccount.setUserId("1");
 		Account account=new Account();
 		account.setUserId("1");

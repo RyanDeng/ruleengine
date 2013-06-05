@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <package name="cn.dc1">
-<import name="cn.dc1.use.User"/>
-<import name="cn.dc1.use.Account"/>
+<import name="cn.dc.use.User"/>
+<import name="cn.dc.use.Account"/>
 <rule name="account1">
 	<rule-attribute name="salience" value="10" />
 	<when>
 		<column type="User" name="user">
 			<condition >  user.userId &lt;= 2 </condition>
-			<condition andOr="OR" bracket="left">user.balance>0</condition>
-			<condition andOr="OR" >user.age>0</condition>
+			<condition andOr="AND" bracket="left">user.balance>0</condition>
+			<condition andOr="OR" >user.age>21</condition>
 			<condition andOr="AND" bracket="right">user.gender=="male"</condition>
-			<condition andOr="OR" bracket="left">user.age<23</condition>
-			<condition andOr="AND" bracket="left">user.balance>4</condition>
-			<condition andOr="OR" bracket="right">user.gender=="female"</condition>
-			<condition andOr="OR" bracket="right">user.age>50</condition>
+			<condition andOr="AND" bracket="left">user.address=="上海"</condition>
+			<condition andOr="AND" bracket="left">user.company=="电信"</condition>
+			<condition andOr="OR" bracket="right">user.phone=="13524"</condition>
+			<condition andOr="OR" bracket="right">user.height>175</condition>
 		</column>
 		<column type="Account" name="account">
-			<condition>account.userId==userAccount.userId</condition>
+			<condition>account.userId==user.userId</condition>
 		</column>
 	</when>
 	<then>

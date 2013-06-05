@@ -249,7 +249,7 @@ public class ObjectTypeNode implements Serializable, Node {
 	private int findNextRightBracketIndex(int leftIndex, List<Condition> conditions){
 		int leftCount=0;
 		for(int i=leftIndex+1;i<conditions.size();i++){
-			if(conditions.get(i).getBracket()==null) break;
+			if(conditions.get(i).getBracket()==null) continue;
 			if(conditions.get(i).getBracket().equals("left")){
 				leftCount++;
 			}else if (conditions.get(i).getBracket().equals("right")) {
