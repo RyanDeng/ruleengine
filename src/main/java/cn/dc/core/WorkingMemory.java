@@ -12,6 +12,7 @@ import javax.swing.text.DefaultEditorKit.InsertBreakAction;
 import cn.dc.agenda.Agenda;
 import cn.dc.compiler.AlphaMemoryNode;
 import cn.dc.compiler.JoinNode;
+import cn.dc.compiler.Node;
 import cn.dc.compiler.RuleNode;
 
 public class WorkingMemory {
@@ -90,22 +91,21 @@ public class WorkingMemory {
 	}
 	private void getRuleQueue(){
 		for (AlphaMemoryNode alphaMemoryNode : alphaMemoryNodes) {
-			if(nodeExistedInTraversedNode(alphaMemoryNode)) break;//如果存在则说明左或右节点已进入运算过
+			
+			if(nodeExistedInTraversedNode(alphaMemoryNode)) continue;//如果存在则说明左或右节点已进入运算过
 			
 			if (alphaMemoryNode.getJoinNodes().size()!=0) {
 				for(JoinNode joinNode:alphaMemoryNode.getJoinNodes()){
 					if(joinNode instanceof RuleNode){
 						ruleQueue.offer((RuleNode)joinNode);
 					}else if (joinNode instanceof JoinNode) {
+						if(joinNode.getRightInputNode() instanceof JoinNode) continue;
 						RuleNode ruleNode = joinNode.fireEval(
 								alphaMemoryNode);		
 						if (ruleNode != null) {
 							//////////////////把当前的另一边输入加入已traverse队列中
-							AlphaMemoryNode otherSideNode = joinNode.getOtherInputNode(
-											alphaMemoryNode);
-							if (otherSideNode != null) {
-								traversedAlphaMemoryNodes.add(otherSideNode);
-							}
+							putOtherNodesToTraverseNodes(alphaMemoryNode,joinNode);
+							
 							///////////
 							ruleQueue.offer(ruleNode);
 						}
@@ -113,5 +113,17 @@ public class WorkingMemory {
 				}
 			}
 		}
+	}
+	private void putOtherNodesToTraverseNodes(Node oneSideNode, JoinNode joinNode){
+		//////////////////把当前的另一边输入加入已traverse队列中
+		AlphaMemoryNode otherSideNode = joinNode.getOtherInputNode(
+				oneSideNode);
+		if (otherSideNode != null) {
+			traversedAlphaMemoryNodes.add(otherSideNode);
+		}
+		if(joinNode.getNextJoinOrRuleNode() instanceof JoinNode){
+			putOtherNodesToTraverseNodes(joinNode, (JoinNode)joinNode.getNextJoinOrRuleNode());
+		}
+		///////////
 	}
 }

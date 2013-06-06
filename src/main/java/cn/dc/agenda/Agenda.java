@@ -33,14 +33,10 @@ public class Agenda {
 			readyQueue.add(activation);
 		}
 		Collections.sort(readyQueue,new ConflictResolver());
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 		for(Activation activation:readyQueue){
 			fire(activation);
+			
 		}
 		
 	}

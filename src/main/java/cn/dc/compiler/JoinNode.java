@@ -169,17 +169,17 @@ public class JoinNode implements Serializable, Node {
 	}
 	private boolean eval(Map map){
 		Serializable compiled =MVEL.compileExpression(expression);
-		Object res=MVEL.executeExpression(compiled,map);
-		 return Boolean.parseBoolean((String)res);
+		Boolean res=(Boolean)MVEL.executeExpression(compiled,map);
+		 return res;
 	}
-	public AlphaMemoryNode getOtherInputNode(AlphaMemoryNode alphaMemoryNode){
-		if(alphaMemoryNode==leftInputNode){
+	public AlphaMemoryNode getOtherInputNode(Node oneSideNode){
+		if(oneSideNode==leftInputNode){
 			if(rightInputNode instanceof AlphaMemoryNode){
 				return (AlphaMemoryNode)rightInputNode;
 			}else{
 				return null;
 			}
-		}else if(alphaMemoryNode==rightInputNode){
+		}else if(oneSideNode==rightInputNode){
 			return (AlphaMemoryNode)leftInputNode;
 		}
 		return null;

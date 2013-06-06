@@ -68,12 +68,12 @@ public class ObjectTypeNode implements Serializable, Node {
 		int lastIndexOfSingleCondition=figuareIndexOfAddMemory(column.getConditions(), reteTempData);
 		if(column.getConditions()==null || lastIndexOfSingleCondition==-1){
 			AlphaNode alphaNodeNull=new AlphaNode("", column.getTypeAllpath());
-			alphaNodeNull.buildself(ruleName,null,true);
+			alphaNodeNull.buildself(ruleName,column.getName(),true);
 			if (!alphaNodes.containsKey("")) {
 				alphaNodes.put("", alphaNodeNull);
 			}else{
 				AlphaMemoryNode alphaMemoryNode=(AlphaMemoryNode) alphaNodes.get("").getNextNodes().get("");
-				alphaMemoryNode.buildSelf(ruleName, null);
+				alphaMemoryNode.buildSelf(ruleName, column.getName());
 			}
 			List<AlphaNode> results=new ArrayList<AlphaNode>();
 			results.add(alphaNodes.get(""));

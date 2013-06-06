@@ -16,7 +16,6 @@
 	</when>
 	<then>
 		course.setScore(course.getScore()+5);
-		System.out.println("-"+student.getName()+"的"+course.getName()+"更改成"+course.getScore());
 	</then>
 </rule>
 
@@ -34,7 +33,6 @@
 	</when>
 	<then>
 		course.setLevel("良");
-		System.out.println("-"+student.getName()+"的"+course.getName()+"等第是"+course.getLevel());
 	</then>
 </rule>
 </package>

@@ -29,7 +29,11 @@ public class Student {
 	public void setAward(int award) {
 		this.award = award;
 	}
-	
+	@Override
+	public String toString() {
+		return "Student [id=" + id + ", name=" + name + ", award=" + award
+				+ "]";
+	}
 	
 
 }

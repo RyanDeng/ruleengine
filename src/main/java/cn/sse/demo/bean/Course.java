@@ -38,5 +38,10 @@ public class Course {
 	public void setLevel(String level) {
 		this.level = level;
 	}
+	@Override
+	public String toString() {
+		return "Course [studentId=" + studentId + ", name=" + name + ", score="
+				+ score + ", level=" + level + "]";
+	}
 	
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package name="cn.sse.company">
+<import name="cn.sse.demo.bean.Company"/>
+<import name="cn.sse.demo.bean.Department"/>
+<import name="cn.sse.demo.bean.Employee"/>
+
+<rule name="增加招聘名额">
+	<rule-attribute name="salience" value="10" />
+	<when>
+		<column type="Company" name="company">
+			<condition>company.province=="上海"</condition>
+			<condition andOr="AND" bracket="left">company.city=="杨浦"</condition>
+			<condition andOr="OR" bracket="right">company.city=="嘉定"</condition>
+		</column>
+	</when>
+	<then>
+		company.setHeadCount(company.getHeadCount()+10);
+	</then>
+</rule>
+
+<rule name="上海的工龄5年以上的市场部员工加500块津贴">
+	<rule-attribute name="salience" value="10" />
+	<when>
+		<column type="Company" name="company">
+			<condition>company.province=="上海"</condition>
+		</column>
+		<column type="Department" name="de">
+			<condition>de.name=="市场部"</condition>
+			<condition>de.companyId==company.id</condition>
+		</column>
+		<column type="Employee" name="emp">
+			<condition>emp.workAge>=5</condition>
+			<condition>emp.departmentId==de.id</condition>
+		</column>
+	</when>
+	<then>
+		emp.setSalary(emp.getSalary()+500);
+	</then>
+</rule>
+<!-- <rule name="account1">
+	<rule-attribute name="salience" value="10" />
+	<when>
+		<column type="User" name="user">
+			<condition >  user.userId &lt;= 2 </condition>
+			<condition andOr="AND" bracket="left">user.balance>0</condition>
+			<condition andOr="OR" >user.age>21</condition>
+			<condition andOr="AND" bracket="right">user.gender=="male"</condition>
+			<condition andOr="AND" bracket="left">user.address=="上海"</condition>
+			<condition andOr="AND" bracket="left">user.company=="电信"</condition>
+			<condition andOr="OR" bracket="right">user.phone=="13524"</condition>
+			<condition andOr="OR" bracket="right">user.height>175</condition>
+		</column>
+		<column type="Account" name="account">
+			<condition>account.userId==user.userId</condition>
+		</column>
+	</when>
+	<then>
+		account.setBalance(account.getBalance()+1);
+		System.out.println(account.getBalance());
+	</then>
+</rule>-->
+</package>
+
+<!-- and A
+ 
+ or (B
+ or  c
+ and d)
+ 
+ or (e
+ and (f
+ or g)
+ or h)-->
